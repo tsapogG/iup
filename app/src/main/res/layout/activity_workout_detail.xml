@@ -1,0 +1,77 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Верхний контейнер с кнопкой "Назад" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Кнопка "Назад" в виде стрелки -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="Назад"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="День тренировки"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:textColor="#000000" />
+    </LinearLayout>
+
+    <!-- Текст описания тренировки -->
+    <TextView
+        android:id="@+id/workoutTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:padding="16dp"
+        />
+
+    <!-- Кнопки "Выполнено" и "Не выполнено" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/completeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#90BE6D"
+            android:padding="12dp"
+            android:text="Выполнено"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/notCompletedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF6347"
+            android:padding="12dp"
+            android:text="Не выполнено"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+
+</LinearLayout>

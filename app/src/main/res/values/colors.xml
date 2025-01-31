@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="figma1">#D9D9D9</color>
+    <color name="figma2">#EEEEEE</color>
+    <color name="black">#000000</color>
+    <color name="header_background">#E0E0E0</color>
+    <color name="header_text">#000000</color>
+    <color name="training_day">#FFCDD2</color>
+    <color name="rest_day">#C8E6C9</color>
+    <color name="green">#238C5B</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="colorPrimary">#6200EE</color> <!-- Основной цвет приложения -->
+    <color name="colorPrimaryDark">#3700B3</color> <!-- Темный оттенок основного цвета -->
+    <color name="colorAccent">#03DAC5</color> <!-- Акцентный цвет -->
+    <color name="my_light_primary">#577590</color>
+</resources>

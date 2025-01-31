@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">IUP</string>
+    <string name="title_activity_training_detail">TrainingDetailActivity</string>
+    <string-array name="experience_levels">
+        <item>Новичок</item>
+        <item>Любитель</item>
+        <item>Профессионал</item>
+    </string-array>
+</resources>
