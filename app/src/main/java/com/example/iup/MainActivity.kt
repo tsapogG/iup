@@ -1072,7 +1072,7 @@ class MainActivity : AppCompatActivity() {
             workoutsList[i] = workoutsList[i - 1]
         }
 
-        // Повторяем текущую не выполненную тренировку на следующей позиции
+        // Повторяем текущую не выполненную тренировку на следующей позиции)))
         workoutsList[failedWorkoutIndex + 2] = workoutsList[failedWorkoutIndex]
 
         // Обновляем массив тренировок
