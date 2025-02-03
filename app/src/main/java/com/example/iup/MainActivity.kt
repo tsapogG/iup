@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     // Инициализируем workouts значением по умолчанию
     private var workouts: Array<String> = arrayOf("No workouts available")
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint("DefaultLocale", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private fun showPlanDialog(isFirstSetup: Boolean) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_plan, null)
         val benchPressInput = dialogView.findViewById<EditText>(R.id.benchPressInput)
@@ -321,6 +322,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("DefaultLocale")
     private fun generateWorkouts() {
         // Вычисляем коэффициент нагрузки на основе выбранного процента
         val loadFactor = 1 + (loadPercentage / 100.0)
@@ -345,12 +347,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 2: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -363,12 +360,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 3: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -381,12 +373,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 4: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -399,12 +386,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 5: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -417,12 +399,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 6: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -435,12 +412,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 7: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -453,12 +425,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 8: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -471,12 +438,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 9: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -489,12 +451,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 10: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -507,12 +464,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 11: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -525,12 +477,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 12: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -543,12 +490,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 13: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -561,12 +503,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 14: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -579,12 +516,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 15: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -597,12 +529,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 16: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -615,12 +542,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 17: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -633,12 +555,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 18: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -651,12 +568,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 19: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -669,12 +581,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 20: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -687,12 +594,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 21: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -705,12 +607,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 22: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -723,12 +620,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 23: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -741,12 +633,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 24: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -759,12 +646,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 25: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -777,12 +659,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 26: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -795,12 +672,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 27: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -813,12 +685,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 28: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -831,12 +698,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 29: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -849,12 +711,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 30: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -867,12 +724,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 31: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -885,12 +737,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 32: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -903,12 +750,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 33: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -921,12 +763,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 34: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -939,12 +776,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 35: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -957,12 +789,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 36: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -975,12 +802,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 37: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -993,12 +815,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 38: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1011,12 +828,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 39: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1029,12 +841,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 40: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1047,12 +854,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 41: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1065,12 +867,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 42: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1083,12 +880,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 43: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1101,12 +893,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 44: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1119,12 +906,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 45: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1137,12 +919,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 46: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1155,12 +932,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 47: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1173,12 +945,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
             "Тренировка 48: \n" +
                     "Присед со штангой на плечах: \n" +
                     "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
@@ -1191,15 +958,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
                     "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
-                    "6. 3 подхода по 2 повторения x ${
-                        String.format(
-                            "%.2f",
-                            benchPressNew * 0.85
-                        )
-                    } kg \n\n",
-
-
-
+                    "6. 3 подхода по 2 повторения x ${String.format("%.2f", benchPressNew * 0.85)} kg \n\n",
         )
 
         Log.d("GenerateWorkouts", "Workouts updated: ${workouts.joinToString()}")
