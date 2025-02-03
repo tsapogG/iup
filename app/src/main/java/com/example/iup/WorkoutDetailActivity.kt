@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 import android.graphics.Color
+import android.view.View
 
 class WorkoutDetailActivity : AppCompatActivity() {
 
@@ -26,18 +27,11 @@ class WorkoutDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_detail)
 
-
         // Инициализируем элементы UI
-        workoutTextView = findViewById(R.id.workoutTextView)  // Убедитесь, что у вас есть TextView для отображения описания
+        workoutTextView = findViewById(R.id.workoutTextView)
         completeButton = findViewById(R.id.completeButton)
-        notCompletedButton = findViewById(R.id.notCompletedButton) // Добавляем кнопку для "Не выполнил"
+        notCompletedButton = findViewById(R.id.notCompletedButton)
         sharedPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
-
-        val backButton = findViewById<ImageButton>(R.id.backButton)
-        backButton.setOnClickListener {
-            // Возвращаемся на предыдущий экран
-            onBackPressed()
-        }
 
         // Получаем индекс тренировки и описание из Intent
         workoutIndex = intent.getIntExtra("WORKOUT_INDEX", -1)
@@ -46,32 +40,46 @@ class WorkoutDetailActivity : AppCompatActivity() {
         // Устанавливаем описание тренировки в TextView
         workoutTextView.text = workoutDescription
 
-        // Получаем состояние тренировки
-        val isCompleted = sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)
-        val isNotCompleted = sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)
-
-        // Устанавливаем состояние кнопок
-        if (isCompleted) {
-            completeButton.text = "Отменить"
-            completeButton.setBackgroundColor(Color.parseColor("#F94144"))
+        // Проверяем, является ли тренировка "Днем отдыха"
+        if (workoutDescription == "День отдыха") {
+            // Скрываем или делаем неактивными кнопки
+            completeButton.visibility = View.GONE
+            notCompletedButton.visibility = View.GONE
         } else {
-            completeButton.text = "Выполнить"
-            completeButton.setBackgroundColor(Color.parseColor("#4D908E"))
-        }
+            // Получаем состояние тренировки из SharedPreferences
+            val isCompleted = sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)
+            val isNotCompleted =
+                sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)
 
-        if (isNotCompleted) {
-            notCompletedButton.text = "Отменить"
-            notCompletedButton.setBackgroundColor(Color.parseColor("#F94144"))
-        } else {
-            notCompletedButton.text = "Не выполнено"
-            notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E"))
+            // Если тренировка уже выполнена, скрываем кнопку "Не выполнено"
+            if (isCompleted) {
+                notCompletedButton.visibility = View.GONE
+            } else {
+                notCompletedButton.visibility = View.VISIBLE
+            }
+
+            // Устанавливаем состояние кнопок
+            if (isCompleted) {
+                completeButton.text = "Отменить"
+                completeButton.setBackgroundColor(Color.parseColor("#F94144"))
+            } else {
+                completeButton.text = "Выполнить"
+                completeButton.setBackgroundColor(Color.parseColor("#4D908E"))
+            }
+
+            if (isNotCompleted) {
+                notCompletedButton.text = "Отменить"
+                notCompletedButton.setBackgroundColor(Color.parseColor("#F94144"))
+            } else {
+                notCompletedButton.text = "Не выполнено"
+                notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E"))
+            }
         }
 
         // Логика для кнопки "Выполнил"
         completeButton.setOnClickListener {
             val editor = sharedPrefs.edit()
-
-            if (!isCompleted) {
+            if (!sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)) {
                 editor.putBoolean("WORKOUT_COMPLETED_$workoutIndex", true).apply()
                 completeButton.text = "Отменить"
                 completeButton.setBackgroundColor(Color.parseColor("#F94144"))
@@ -85,34 +93,31 @@ class WorkoutDetailActivity : AppCompatActivity() {
             val resultIntent = Intent()
             resultIntent.putExtra("WORKOUT_INDEX", workoutIndex)
             setResult(Activity.RESULT_OK, resultIntent)
-            finish() // Закрываем текущую активность
+            finish()
         }
 
-        // Логика для кнопки "Не выполнил"
+// Логика для кнопки "Не выполнил"
         notCompletedButton.setOnClickListener {
             val editor = sharedPrefs.edit()
-
-            if (!isNotCompleted) {
-                // Если тренировка не была помечена как "не выполнена"
+            if (!sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)) {
                 editor.putBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", true).apply()
                 notCompletedButton.text = "Отменить"
-                notCompletedButton.setBackgroundColor(Color.parseColor("#F94144")) // Красный цвет
+                notCompletedButton.setBackgroundColor(Color.parseColor("#F94144"))
             } else {
-                // Если тренировка уже была помечена как "не выполнена"
                 editor.putBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false).apply()
                 notCompletedButton.text = "Не выполнено"
-                notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E")) // Цвет по умолчанию
+                notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E"))
             }
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
             resultIntent.putExtra("WORKOUT_INDEX", workoutIndex)
             setResult(Activity.RESULT_OK, resultIntent)
-            finish() // Закрываем текущую активность
+            finish()
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()  // Это возвращает на предыдущий экран
+        override fun onBackPressed() {
+            super.onBackPressed()  // Это возвращает на предыдущий экран
+        }
     }
-}

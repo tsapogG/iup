@@ -110,7 +110,7 @@
         android:layout_marginBottom="28dp"
         android:background="@drawable/rounded_background"
         android:clipToOutline="true"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +126,17 @@
             android:backgroundTint="#238C5B"
             android:contentDescription="Настройки"
             android:elevation="4dp"
-            android:layout_gravity="center" /> <!-- Центрирование кнопки внутри LinearLayout -->
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"/> <!-- Центрирование кнопки внутри LinearLayout -->
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/ic_reset_icon"
+        android:backgroundTint="#FF0000"
+        android:contentDescription="Сброс настроек"
+        android:elevation="4dp"
+        android:layout_gravity="center" />
     </LinearLayout>
 
     <!-- Дни недели -->

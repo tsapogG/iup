@@ -27,6 +27,8 @@ import android.widget.Spinner
 import java.util.Calendar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.core.view.setMargins
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -60,6 +62,10 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.settingsButton)
         settingsButton.setOnClickListener {
             openSettingsDialog()
+        }
+        val resetButton = findViewById<Button>(R.id.resetButton)
+        resetButton.setOnClickListener {
+            showResetConfirmationDialog() // Показываем диалог подтверждения
         }
 
         if (isFirstRun()) {
@@ -812,7 +818,386 @@ class MainActivity : AppCompatActivity() {
                             "%.2f",
                             benchPressNew * 0.85
                         )
-                    } kg \n\n"
+                    } kg \n\n",
+            "Тренировка 28: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 29: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 30: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 31: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 32: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 33: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 34: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 35: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 36: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 37: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 38: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 39: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 40: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 41: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 42: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 43: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 44: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 45: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 46: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 47: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+            "Тренировка 48: \n" +
+                    "Присед со штангой на плечах: \n" +
+                    "1. 4 подхода по 3 повторения x ${String.format("%.2f", squat * 0.7)} kg \n" +
+                    "2. 3 подхода по 2 повторения x ${String.format("%.2f", squat * 0.75)} kg \n" +
+                    "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
+                    "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
+                    "Жим лежа: \n" +
+                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
+                    "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
+                    "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
+                    "5. 3 x ${String.format("%.2f", benchPressNew * 0.8)} kg \n" +
+                    "6. 3 подхода по 2 повторения x ${
+                        String.format(
+                            "%.2f",
+                            benchPressNew * 0.85
+                        )
+                    } kg \n\n",
+
 
 
         )
@@ -820,48 +1205,69 @@ class MainActivity : AppCompatActivity() {
         Log.d("GenerateWorkouts", "Workouts updated: ${workouts.joinToString()}")
     }
 
+    private fun showResetConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Подтвердите действие")
+        builder.setMessage("Вы уверены, что хотите сбросить все настройки?")
+        builder.setPositiveButton("Да") { _, _ ->
+            resetToFactorySettings() // Вызываем метод сброса
+        }
+        builder.setNegativeButton("Нет") { dialog, _ ->
+            dialog.dismiss() // Закрываем диалог без изменений
+        }
+        builder.create().show()
+    }
+    private fun resetToFactorySettings() {
+        val sharedPreferences = getSharedPreferences("TrainingPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        // Очищаем все настройки
+        editor.clear()
+        editor.putBoolean("isFirstRun", true) // Устанавливаем isFirstRun в true
+        editor.apply()
+
+        // Очищаем состояние тренировок
+        val workoutPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
+        val workoutEditor = workoutPrefs.edit()
+        workoutEditor.clear()
+        workoutEditor.apply()
+
+        // Восстанавливаем начальный массив тренировок
+        generateWorkouts()
+
+        // Перегенерируем календарь
+        generateCalendar(trainingStartDate)
+
+        // Перезапускаем активность для применения изменений
+        recreate()
+    }
+
     private val WORKOUT_REQUEST_CODE = 100
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == WORKOUT_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Получаем индекс тренировки, чтобы обновить день в календаре
+            // Получаем индекс тренировки
             val workoutIndex = data?.getIntExtra("WORKOUT_INDEX", -1) ?: return
 
             // Получаем состояние тренировки из SharedPreferences
             val sharedPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
             val isCompleted = sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)
-            val isNotCompleted =
-                sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)
+            val isNotCompleted = sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)
 
             // Если тренировка помечена как "не выполнена", сдвигаем тренировки
             if (isNotCompleted) {
                 shiftWorkouts(workoutIndex) // Сдвигаем тренировки
             }
 
-            // Найдем день в календаре и обновим его цвет
-            val dayView = findViewById<ViewGroup>(calendarContainer.id)
-                ?.findViewWithTag<TextView>(workoutIndex)
-
-            // Обновляем фон дня в календаре в зависимости от выполнения тренировки
-            dayView?.background = GradientDrawable().apply {
-                setColor(
-                    when {
-                        isCompleted -> Color.parseColor("#90BE6D") // Зеленый для выполненных
-                        isNotCompleted -> Color.parseColor("#F94144") // Красный для не выполненных
-                        else -> Color.parseColor("#4D908E") // Синий для обычных
-                    }
-                )
-                cornerRadius = 10f * resources.displayMetrics.density
-            }
-
-            // Обновляем календарь, если тренировка сдвинута
+            // Перегенерируем календарь для применения изменений
             generateCalendar(trainingStartDate)
         }
     }
 
 
+
     // Generate Calendar
+
     fun generateCalendar(startDate: Calendar) {
         val calendar = (startDate.clone() as Calendar).apply {
             set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Start the calendar from Monday
@@ -993,7 +1399,6 @@ class MainActivity : AppCompatActivity() {
 
         // Вычисляем размер ячейки
         val cellSize = ((screenWidth - totalMargins) / 8).toInt()
-
         val layoutParams = GridLayout.LayoutParams().apply {
             width = cellSize
             height = cellSize
@@ -1004,34 +1409,35 @@ class MainActivity : AppCompatActivity() {
 
         if (isTrainingDay) {
             val trainingIndex = (dayIndex / 7) * 3 + listOf(0, 2, 4).indexOf(dayIndex % 7)
+
+            // Получаем состояние тренировки
             val isCompleted = sharedPrefs.getBoolean("WORKOUT_COMPLETED_$trainingIndex", false)
             val isNotCompleted =
                 sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$trainingIndex", false)
 
+            // Создаем TextView для тренировочного дня
             val dayView = TextView(this).apply {
                 text = "${calendar.get(Calendar.DAY_OF_MONTH)}"
                 textSize = 14f
                 gravity = Gravity.CENTER
                 this.layoutParams = layoutParams
-
                 background = GradientDrawable().apply {
                     setColor(
                         when {
-                            isCompleted -> Color.parseColor("#90BE6D")
-                            isNotCompleted -> Color.parseColor("#F94144")
-                            else -> Color.parseColor("#4D908E")
+                            isCompleted -> Color.parseColor("#90BE6D") // Зеленый для выполненных
+                            isNotCompleted -> Color.parseColor("#F94144") // Красный для не выполненных
+                            else -> Color.parseColor("#4D908E") // Синий для обычных
                         }
                     )
-                    cornerRadius = 10f * displayMetrics.density
+                    cornerRadius = 10f * resources.displayMetrics.density
                 }
-
-                tag = trainingIndex
+                tag = trainingIndex // Устанавливаем тег как индекс тренировки
             }
 
+            // Устанавливаем обработчик кликов
             dayView.setOnClickListener {
                 val isNotCompleted =
                     sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_${dayView.tag}", false)
-
                 if (isNotCompleted) {
                     shiftWorkouts(dayView.tag as Int) // Обновляем тренировки и календарь
                 } else {
@@ -1040,45 +1446,54 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra("WORKOUT_TEXT", workouts[dayView.tag as Int])
                     startActivityForResult(intent, WORKOUT_REQUEST_CODE)
                 }
-
             }
 
+            // Добавляем тренировочный день в сетку
             gridLayout.addView(dayView)
         } else {
+            // Пустой день (не тренировочный)
             val dayView = TextView(this).apply {
                 text = calendar.get(Calendar.DAY_OF_MONTH).toString()
                 textSize = 14f
                 gravity = Gravity.CENTER
                 this.layoutParams = layoutParams
-
                 background = GradientDrawable().apply {
-                    setColor(Color.LTGRAY)
-                    cornerRadius = 10f * displayMetrics.density
+                    setColor(Color.LTGRAY) // Серый цвет для пустых дней
+                    cornerRadius = 10f * resources.displayMetrics.density
                 }
             }
-
             gridLayout.addView(dayView)
         }
     }
 
+
+
     private fun shiftWorkouts(failedWorkoutIndex: Int) {
         val workoutsList = workouts.toMutableList()
+
+        // Проверяем, что индекс корректный
+        if (failedWorkoutIndex < 0 || failedWorkoutIndex >= workoutsList.size) return
 
         // Добавляем "День отдыха" после не выполненной тренировки
         workoutsList.add(failedWorkoutIndex + 1, "День отдыха")
 
-        // Сдвигаем все тренировки вперед начиная с позиции +2
+        // Сдвигаем все последующие тренировки вперед
         for (i in workoutsList.size - 1 downTo failedWorkoutIndex + 2) {
             workoutsList[i] = workoutsList[i - 1]
         }
 
-        // Повторяем текущую не выполненную тренировку на следующей позиции)))--
+        // Повторяем текущую не выполненную тренировку на следующей позиции
         workoutsList[failedWorkoutIndex + 2] = workoutsList[failedWorkoutIndex]
+
+        // Если массив стал недостаточно длинным, добавляем новые тренировочные дни
+        while (workoutsList.size < failedWorkoutIndex + 4) {
+            workoutsList.add(workouts[(workoutsList.size - failedWorkoutIndex - 2) % workouts.size])
+        }
 
         // Обновляем массив тренировок
         workouts = workoutsList.toTypedArray()
 
-        // Пересоздаем календарь
-        generateCalendar(trainingStartDate)
+        // Сохраняем обновленные тренировки
+        saveData()
     }
 }
