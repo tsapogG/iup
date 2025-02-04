@@ -26,12 +26,21 @@ class WorkoutDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workout_detail)
+        var mm = MainActivity()
+
 
         // Инициализируем элементы UI
         workoutTextView = findViewById(R.id.workoutTextView)
         completeButton = findViewById(R.id.completeButton)
         notCompletedButton = findViewById(R.id.notCompletedButton)
         sharedPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
+        val backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+
+            onBackPressed()
+        }
+
+
 
         // Получаем индекс тренировки и описание из Intent
         workoutIndex = intent.getIntExtra("WORKOUT_INDEX", -1)
@@ -116,6 +125,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
             finish()
         }
     }
+
 
         override fun onBackPressed() {
             super.onBackPressed()  // Это возвращает на предыдущий экран

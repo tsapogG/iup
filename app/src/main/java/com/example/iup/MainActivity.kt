@@ -39,9 +39,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var calendarContainer: LinearLayout
-    private var benchPress = 0
-    private var squat = 0
-    private var deadlift = 0
+    var benchPress = 0
+    var squat = 0
+    var deadlift = 0
     private var trainingStartDate: Calendar = Calendar.getInstance()
     private var experienceLevel: Int = 0 // 0 - Новичок, 1 - Любитель, 2 - Профессионал
     private var loadPercentage: Int = 0
@@ -1227,7 +1227,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun shiftWorkouts(failedWorkoutIndex: Int) {
+     fun shiftWorkouts(failedWorkoutIndex: Int) {
         val workoutsList = workouts.toMutableList()
 
         // Проверяем, что индекс корректный
