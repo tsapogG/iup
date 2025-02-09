@@ -33,6 +33,8 @@ import androidx.core.view.setMargins
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.example.iup.utils.Day
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,14 +50,7 @@ class MainActivity : AppCompatActivity() {
     private var experienceLevel: Int = 0 // 0 - Новичок, 1 - Любитель, 2 - Профессионал
     private var loadPercentage: Int = 0
 
-    data class Day(
-        val date: Calendar,
-        var isTrainingDay: Boolean = false,
-        var workoutIndex: Int = -1, // Индекс тренировки из workouts
-        var completed: Boolean = false,
-        var notCompleted: Boolean = false,
-        var isRestDay: Boolean = false // Флаг "день отдыха"
-    )
+
     // Инициализируем workouts значением по умолчанию
     private var workouts: Array<String> = arrayOf("No workouts available")
 
@@ -1092,7 +1087,7 @@ class MainActivity : AppCompatActivity() {
                 val isTrainingDay = dayIndex >= 0 && (dayIndex % 7 == 0 || dayIndex % 7 == 2 || dayIndex % 7 == 4)
 
                 val workoutIndex = if (isTrainingDay) {
-                    (dayIndex / 7) * 3 + listOf(0, 2, 4).indexOf(dayIndex % 7) + opa
+                    (dayIndex / 7) * 3 + listOf(0, 2, 4).indexOf(dayIndex % 7) + opa / 2
                 } else {
                     -1 // Для пустых дней
                 }
@@ -1103,7 +1098,8 @@ class MainActivity : AppCompatActivity() {
                     workoutIndex = workoutIndex,
                     completed = false,
                     notCompleted = false,
-                    isRestDay = false
+                    isRestDay = false,
+                    workoutDescription = if (isTrainingDay) workouts.getOrNull(workoutIndex) else null
                 )
 
                 daysList.add(day) // Добавляем день в список
@@ -1216,40 +1212,35 @@ class MainActivity : AppCompatActivity() {
                     )
                     cornerRadius = 10f * resources.displayMetrics.density
                 }
-                tag = trainingIndex // Устанавливаем тег как индекс тренировки
+                tag = trainingIndex // Устанавливаем тег как индекс дня
             }
 
             dayView.setOnClickListener {
-                if (!isCompleted && !isNotCompleted && day.workoutIndex != -1) {
+                if (!isCompleted && !isNotCompleted && day.workoutDescription != null) {
                     val intent = Intent(this@MainActivity, WorkoutDetailActivity::class.java)
                     intent.putExtra("WORKOUT_INDEX", it.tag as Int)
-                    intent.putExtra("WORKOUT_TEXT", workouts[day.workoutIndex])
+                    intent.putExtra("WORKOUT_TEXT", day.workoutDescription)
                     startActivityForResult(intent, WORKOUT_REQUEST_CODE)
                 }
             }
 
             gridLayout.addView(dayView)
         } else {
+            // Пустой день
             val dayView = TextView(this).apply {
                 text = day.date.get(Calendar.DAY_OF_MONTH).toString()
                 textSize = 14f
                 gravity = Gravity.CENTER
                 this.layoutParams = layoutParams
                 background = GradientDrawable().apply {
-                    setColor(
-                        if (day.isRestDay) {
-                            Color.GRAY // Серый цвет для дней отдыха
-                        } else {
-                            Color.LTGRAY // Более светлый серый для пустых дней
-                        }
-                    )
+                    setColor(Color.LTGRAY) // Серый цвет для пустых дней
                     cornerRadius = 10f * resources.displayMetrics.density
                 }
             }
 
             dayView.setOnClickListener {
-                if (day.isRestDay || day.workoutIndex == -1) {
-                    // Открываем экран "День отдыха"
+                if (!day.isTrainingDay || day.workoutDescription == null) {
+                    // Открываем экран "День отдыха" для пустых дней
                     val intent = Intent(this@MainActivity, RestDayActivity::class.java)
                     startActivity(intent)
                 }
@@ -1267,7 +1258,7 @@ class MainActivity : AppCompatActivity() {
             editor.putInt("DAY_${index}_WORKOUT_INDEX", day.workoutIndex)
             editor.putBoolean("DAY_${index}_COMPLETED", day.completed)
             editor.putBoolean("DAY_${index}_NOT_COMPLETED", day.notCompleted)
-            editor.putBoolean("DAY_${index}_IS_REST_DAY", day.isRestDay) // Сохраняем флаг "день отдыха"
+            editor.putString("DAY_${index}_WORKOUT_DESCRIPTION", day.workoutDescription)
         }
         editor.apply()
     }
@@ -1283,9 +1274,9 @@ class MainActivity : AppCompatActivity() {
             val workoutIndex = sharedPreferences.getInt("DAY_${index}_WORKOUT_INDEX", -1)
             val completed = sharedPreferences.getBoolean("DAY_${index}_COMPLETED", false)
             val notCompleted = sharedPreferences.getBoolean("DAY_${index}_NOT_COMPLETED", false)
-            val isRestDay = sharedPreferences.getBoolean("DAY_${index}_IS_REST_DAY", false)
+            val workoutDescription = sharedPreferences.getString("DAY_${index}_WORKOUT_DESCRIPTION", null)
 
-            daysList.add(Day(date, isTrainingDay, workoutIndex, completed, notCompleted, isRestDay))
+            daysList.add(Day(date, isTrainingDay, workoutIndex, completed, notCompleted, false, workoutDescription))
             index++
         }
 
@@ -1300,35 +1291,49 @@ class MainActivity : AppCompatActivity() {
         failedDay.notCompleted = true
         failedDay.completed = false
 
-        // Находим индекс дня в списке
+        // Находим позицию не выполненного дня в списке
         val failedDayPosition = daysList.indexOf(failedDay)
 
-        // Добавляем "День отдыха" после не выполненной тренировки
-        val restDay = Day(
+        // Добавляем пустой день после не выполненной тренировки
+        val emptyDayAfterFailed = Day(
             date = failedDay.date.clone() as Calendar,
             isTrainingDay = false,
             workoutIndex = -1,
             completed = false,
             notCompleted = false,
-            isRestDay = true
+            isRestDay = false,
+            workoutDescription = null
         )
-        daysList.add(failedDayPosition + 1, restDay)
+        daysList.add(failedDayPosition + 1, emptyDayAfterFailed)
 
-        // Находим следующий тренировочный день и делаем его днем отдыха
+        // Преобразуем следующий тренировочный день в пустой
         for (i in failedDayPosition + 2 until daysList.size) {
             if (daysList[i].isTrainingDay) {
-                // Преобразуем следующий тренировочный день в день отдыха
-                daysList[i].isTrainingDay = false
-                daysList[i].workoutIndex = -1
-                daysList[i].isRestDay = true
+                val nextEmptyDay = Day(
+                    date = daysList[i].date.clone() as Calendar,
+                    isTrainingDay = false,
+                    workoutIndex = -1,
+                    completed = false,
+                    notCompleted = false,
+                    isRestDay = false,
+                    workoutDescription = null
+                )
+                daysList[i] = nextEmptyDay // Преобразуем следующий тренировочный день в пустой
                 break // Останавливаемся после первого найденного тренировочного дня
             }
         }
 
         // Корректируем индексы всех последующих тренировочных дней
+        var skipNextTrainingDay = true // Флаг для пропуска следующего тренировочного дня
         for (i in failedDayPosition + 3 until daysList.size) {
             if (daysList[i].isTrainingDay) {
-                daysList[i].workoutIndex -= 2 // Уменьшаем индекс на 2
+                if (skipNextTrainingDay) {
+                    // Пропускаем первый следующий тренировочный день
+                    skipNextTrainingDay = false
+                } else {
+                    // Для всех остальных тренировочных дней корректируем индекс
+                    daysList[i].workoutIndex -= 2
+                }
             }
         }
 

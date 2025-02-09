@@ -84,7 +84,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
     }
 
 
-        override fun onBackPressed() {
-            super.onBackPressed()  // Это возвращает на предыдущий экран
-        }
+    override fun onBackPressed() {
+        super.onBackPressed()  // Это возвращает на предыдущий экран
     }
+}
