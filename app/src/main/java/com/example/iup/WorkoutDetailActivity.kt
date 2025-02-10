@@ -21,8 +21,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
     private lateinit var completeButton: Button
     private lateinit var notCompletedButton: Button // Кнопка для "Не выполнил"
     private lateinit var sharedPrefs: SharedPreferences
-    private var workoutIndex: Int = -1
-    var fdayd = MainActivity()
+    private var dayIndex: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,60 +38,78 @@ class WorkoutDetailActivity : AppCompatActivity() {
         }
 
         // Получаем индекс тренировки и описание из Intent
-        workoutIndex = intent.getIntExtra("WORKOUT_INDEX", -1)
+        dayIndex = intent.getIntExtra("DAY_INDEX", -1)
         val workoutDescription = intent.getStringExtra("WORKOUT_TEXT")
-
-        if (workoutIndex < 0 || workoutIndex >= 48) { // Проверяем корректность индекса
-            Log.e("WorkoutDetailActivity", "Invalid workout index: $workoutIndex")
+        Log.d("IIIIIIIIIIIIIIIIIIIIIIIIIIII", "IIIIIIIIII = $dayIndex")
+        if (dayIndex < 0 || dayIndex >= 48) { // Проверяем корректность индекса
+            Log.e("WorkoutDetailActivity", "Invalid workout index: $dayIndex")
             finish() // Закрываем активность, если индекс некорректный
             return
         }
 
         workoutTextView.text = workoutDescription
 
-        // Логика для кнопки "Выполнил"
         completeButton.setOnClickListener {
             val editor = sharedPrefs.edit()
-            if (!sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)) {
-                editor.putBoolean("WORKOUT_COMPLETED_$workoutIndex", true).apply()
+            if (!sharedPrefs.getBoolean("WORKOUT_COMPLETED_$dayIndex", false)) {
+                editor.putBoolean("WORKOUT_COMPLETED_$dayIndex", true).apply()
                 completeButton.text = "Отменить"
                 completeButton.setBackgroundColor(Color.parseColor("#F94144"))
+
+                // Обновляем состояние тренировочного дня в SharedPreferences
+                saveTrainingDayState(dayIndex, completed = true, notCompleted = false)
             } else {
-                editor.putBoolean("WORKOUT_COMPLETED_$workoutIndex", false).apply()
+                editor.putBoolean("WORKOUT_COMPLETED_$dayIndex", false).apply()
                 completeButton.text = "Выполнить"
                 completeButton.setBackgroundColor(Color.parseColor("#4D908E"))
+
+                // Сбрасываем состояние тренировочного дня
+                saveTrainingDayState(dayIndex, completed = false, notCompleted = false)
             }
-
-            fdayd.fdays = 0
-
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
-            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex) // Передаем индекс тренировки
+            resultIntent.putExtra("DAY_INDEX", dayIndex) // Передаем индекс тренировки
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
 
-        // Логика для кнопки "Не выполнил"
+// Логика для кнопки "Не выполнил"
         notCompletedButton.setOnClickListener {
             val editor = sharedPrefs.edit()
-            if (!sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)) {
-                editor.putBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", true).apply()
+            if (!sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$dayIndex", false)) {
+                editor.putBoolean("WORKOUT_NOT_COMPLETED_$dayIndex", true).apply()
                 notCompletedButton.text = "Отменить"
                 notCompletedButton.setBackgroundColor(Color.parseColor("#F94144"))
+
+                // Обновляем состояние тренировочного дня в SharedPreferences
+                saveTrainingDayState(dayIndex, completed = false, notCompleted = true)
             } else {
-                editor.putBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false).apply()
+                editor.putBoolean("WORKOUT_NOT_COMPLETED_$dayIndex", false).apply()
                 notCompletedButton.text = "Не выполнено"
                 notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E"))
+
+                // Сбрасываем состояние тренировочного дня
+                saveTrainingDayState(dayIndex, completed = false, notCompleted = false)
             }
-            fdayd.fdays+= 1
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
-            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex) // Передаем индекс тренировки
+            resultIntent.putExtra("DAY_INDEX", dayIndex) // Передаем индекс тренировки
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
+
+    }
+    private fun saveTrainingDayState(index: Int, completed: Boolean, notCompleted: Boolean) {
+        val trainingPrefs = getSharedPreferences("TrainingPrefs", MODE_PRIVATE)
+        val editor = trainingPrefs.edit()
+
+        // Обновляем состояние "выполнено" и "не выполнено"
+        editor.putBoolean("TRAINING_DAY_${index}_COMPLETED", completed)
+        editor.putBoolean("TRAINING_DAY_${index}_NOT_COMPLETED", notCompleted)
+
+        editor.apply()
     }
 
     override fun onBackPressed() {
