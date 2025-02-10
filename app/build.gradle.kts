@@ -45,7 +45,7 @@ dependencies {
         implementation(libs.androidx.activity.ktx)
         implementation(libs.androidx.constraintlayout)
         implementation(libs.androidx.lifecycle.runtime.ktx)
-
+        implementation ("com.google.code.gson:gson:2.8.9")
         // Compose dependencies
         implementation(libs.androidx.activity.compose)
         implementation(libs.compose.bom)

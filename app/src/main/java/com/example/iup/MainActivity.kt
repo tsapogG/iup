@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var calendarContainer: LinearLayout
-    private var daysList = mutableListOf<Day>()
+    var trainingDaysList = mutableListOf<Day>()
     var benchPress = 0
     var squat = 0
     var deadlift = 0
@@ -77,8 +77,11 @@ class MainActivity : AppCompatActivity() {
             showSetupDialog()
         } else {
             loadSavedData()
-            daysList = loadDaysFromSharedPreferences() // Загружаем список дней
             generateWorkouts()
+
+
+            Log.e("MainActivity","cписок $trainingDaysList")
+
             generateCalendar(trainingStartDate)
         }
         val loadFactor2 = 1 + (loadPercentage / 100.0)
@@ -281,19 +284,23 @@ class MainActivity : AppCompatActivity() {
             putBoolean("isFirstRun", false) // Устанавливаем isFirstRun в false
             putInt("loadPercentage", loadPercentage) // Сохраняем процент нагрузки
             putInt("experienceLevel", experienceLevel) // Сохраняем уровень подготовки
-            putInt("workoutCounter", workoutCounter) // Сохраняем значение workoutCounter
+            putInt("opa", opa) // Сохраняем значение opa
             apply()
         }
 
         Log.d(
             "SaveData",
-            "Data saved: benchPress=$benchPress, squat=$squat, deadlift=$deadlift, startDate=${trainingStartDate.time}, workoutCounter=$workoutCounter"
+            "Data saved: benchPress=$benchPress, squat=$squat, deadlift=$deadlift, startDate=${trainingStartDate.time}, opa=$opa"
         )
     }
 
     private fun updateDateUI(selectedDateTextView: TextView) {
         val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(trainingStartDate.time)
         selectedDateTextView.text = formattedDate
+
+        // Пересоздаем список тренировочных дней при изменении даты
+        val trainingDaysList = generateTrainingDaysList(trainingStartDate)
+        generateCalendar(trainingStartDate)
     }
 
 
@@ -303,6 +310,7 @@ class MainActivity : AppCompatActivity() {
         deadlift = sharedPreferences.getInt("deadlift", 0)
         loadPercentage = sharedPreferences.getInt("loadPercentage", 0)
         experienceLevel = sharedPreferences.getInt("experienceLevel", 0)
+        trainingDaysList = loadTrainingDaysFromSharedPreferences()
         val startDateMillis = sharedPreferences.getLong("startDate", 0)
         if (startDateMillis != 0L) {
             trainingStartDate.timeInMillis = startDateMillis
@@ -991,7 +999,6 @@ class MainActivity : AppCompatActivity() {
         editor.clear()
         editor.putBoolean("isFirstRun", true) // Устанавливаем isFirstRun в true
         editor.apply()
-        opa = 0
 
         // Очищаем состояние тренировок
         val workoutPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
@@ -999,10 +1006,26 @@ class MainActivity : AppCompatActivity() {
         workoutEditor.clear()
         workoutEditor.apply()
 
+        // Сбрасываем переменные
+        opa = 0
+        workoutCounter = 0
+        trainingDaysList.clear() // Очищаем текущий список тренировочных дней
+
+        // Очищаем сохраненные тренировочные дни
+        val allKeys = sharedPreferences.all.keys
+        for (key in allKeys) {
+            if (key.startsWith("TRAINING_DAY_")) {
+                editor.remove(key)
+            }
+        }
+        editor.apply()
+
         // Восстанавливаем начальный массив тренировок
         generateWorkouts()
 
         // Перегенерируем календарь
+        trainingStartDate = Calendar.getInstance() // Устанавливаем текущую дату как новую стартовую
+        saveData() // Сохраняем сброшенные данные
         generateCalendar(trainingStartDate)
 
         // Перезапускаем активность для применения изменений
@@ -1013,30 +1036,54 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == WORKOUT_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Получаем индекс тренировки из тега
             val workoutIndex = data?.getIntExtra("WORKOUT_INDEX", -1) ?: -1
-
-            // Проверяем корректность индекса
             if (workoutIndex < 0 || workoutIndex >= workouts.size) {
                 Log.e("MainActivity", "Invalid workout index: $workoutIndex")
                 return
             }
 
-            // Находим день с данным workoutIndex
-            val day = daysList.find { it.workoutIndex == workoutIndex } ?: return
-
-            // Обновляем состояние дня
             val sharedPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
-            val isCompleted = sharedPrefs.getBoolean("WORKOUT_COMPLETED_$workoutIndex", false)
             val isNotCompleted = sharedPrefs.getBoolean("WORKOUT_NOT_COMPLETED_$workoutIndex", false)
 
             if (isNotCompleted) {
                 shiftWorkouts(workoutIndex) // Вызываем метод сдвига тренировок
             }
 
-            // Перегенерируем календарь для применения изменений
-            generateCalendar(trainingStartDate)
+            generateCalendar(trainingStartDate) // Перегенерируем календарь
         }
+    }
+
+    private fun generateTrainingDaysList(startDate: Calendar): List<Day> {
+        val trainingDaysList = mutableListOf<Day>()
+        val calendar = (startDate.clone() as Calendar).apply {
+            set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Начинаем с понедельника
+        }
+        val endDate = (startDate.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, 16) } // 16 недель
+
+        var workoutCounter = 0 // Счетчик для индексов тренировок
+
+        while (calendar.before(endDate)) {
+            val dayIndex = ((calendar.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            if (dayIndex >= 0 && (dayIndex % 7 == 0 || dayIndex % 7 == 2 || dayIndex % 7 == 4)) {
+                // Это тренировочный день
+                val workoutIndex = workoutCounter.coerceIn(0, workouts.size - 1)
+                val day = Day(
+                    date = calendar.clone() as Calendar,
+                    isTrainingDay = true,
+                    workoutIndex = workoutIndex,
+                    completed = false,
+                    notCompleted = false,
+                    isRestDay = false,
+                    workoutDescription = workouts.getOrNull(workoutIndex)
+                )
+                trainingDaysList.add(day)
+                workoutCounter++
+            }
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        Log.d("GenerateTrainingDays", "Generated $trainingDaysList training days")
+        return trainingDaysList
     }
 
 
@@ -1047,10 +1094,25 @@ class MainActivity : AppCompatActivity() {
         val calendar = (startDate.clone() as Calendar).apply {
             set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Начинаем с понедельника
         }
-        val endDate = (startDate.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, 16) }
-
+        val endDate = (startDate.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, 16) } // 16 недель
         calendarContainer.removeAllViews()
 
+        // Проверяем, изменилась ли дата старта тренировок
+        val savedStartDateMillis = sharedPreferences.getLong("startDate", 0)
+        val isStartDateChanged = savedStartDateMillis != startDate.timeInMillis
+
+        // Загружаем сохраненный список тренировочных дней
+        var trainingDaysList: List<Day>
+        if (!isStartDateChanged && loadTrainingDaysFromSharedPreferences().isNotEmpty()) {
+            // Если дата не изменилась и список существует — используем его
+            trainingDaysList = loadTrainingDaysFromSharedPreferences()
+        } else {
+            // Иначе генерируем новый список тренировочных дней
+            trainingDaysList = generateTrainingDaysList(startDate)
+            saveTrainingDaysToSharedPreferences(trainingDaysList) // Сохраняем новый список
+        }
+
+        // Создаем UI для календаря
         val rootLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
@@ -1058,7 +1120,6 @@ class MainActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-
         val scrollView = ScrollView(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -1066,61 +1127,44 @@ class MainActivity : AppCompatActivity() {
                 1f
             )
         }
-
         val monthContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
         }
 
-        daysList.clear() // Очищаем список дней
+        // Итератор для прохода по тренировочным дням
+        val trainingDaysIterator = trainingDaysList.iterator()
 
         while (calendar.before(endDate)) {
             val monthSection = createMonthSection(calendar) // Создаем секцию для каждого месяца
             monthContainer.addView(monthSection)
-
             val gridLayout = createDayGridLayout() // Создаем сетку для дней месяца
-
-            // Определяем количество пустых ячеек перед началом месяца
             val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
-            val emptyCellsStart = (firstDayOfMonth - Calendar.MONDAY + 7) % 7
-            repeat(emptyCellsStart) {
-                addEmptyDay(gridLayout)
+            val emptyCells = (firstDayOfMonth - Calendar.MONDAY + 7) % 7
+            repeat(emptyCells) {
+                addEmptyDay(gridLayout) // Добавляем пустые ячейки перед началом месяца
             }
 
-            // Генерируем дни месяца
             while (calendar.get(Calendar.MONTH) == monthSection.tag as Int && calendar.before(endDate)) {
                 val dayIndex = ((calendar.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
                 val isTrainingDay = dayIndex >= 0 && (dayIndex % 7 == 0 || dayIndex % 7 == 2 || dayIndex % 7 == 4)
 
                 if (isTrainingDay) {
-                    // Вычисляем workoutIndex с учетом opa
-                    val workoutIndex = (dayIndex / 7) * 3 + listOf(0, 2, 4).indexOf(dayIndex % 7) + opa / 2
-                    val correctedWorkoutIndex = workoutIndex.coerceIn(0, workouts.size - 1)
-
-                    // Создаем объект Day только для тренировочных дней
-                    val day = Day(
-                        date = calendar.clone() as Calendar,
-                        isTrainingDay = true,
-                        workoutIndex = correctedWorkoutIndex,
-                        completed = false,
-                        notCompleted = false,
-                        isRestDay = false,
-                        workoutDescription = workouts.getOrNull(correctedWorkoutIndex)
-                    )
-
-                    daysList.add(day) // Добавляем тренировочный день в список
-                    addDayView(day, gridLayout, startDate) // Добавляем представление дня в UI
+                    // Если это тренировочный день, берем объект из списка trainingDaysList
+                    if (trainingDaysIterator.hasNext()) {
+                        val trainingDay = trainingDaysIterator.next()
+                        addDayView(trainingDay, gridLayout, startDate) // Добавляем представление дня в UI
+                    }
                 } else {
-                    // Для пустых дней создаем только TextView
-                    addDayViewForNonTrainingDays(calendar.clone() as Calendar, gridLayout)
+                    // Если это не тренировочный день, создаем пустой TextView
+                    addEmptyDayForNonTrainingDays(calendar.clone() as Calendar, gridLayout)
                 }
 
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
 
-            // Определяем количество пустых ячеек после окончания месяца
             val remainingCells = (7 - (gridLayout.childCount % 7)) % 7
             repeat(remainingCells) {
-                addEmptyDay(gridLayout)
+                addEmptyDay(gridLayout) // Добавляем пустые ячейки после окончания месяца
             }
 
             monthSection.addView(gridLayout)
@@ -1129,8 +1173,6 @@ class MainActivity : AppCompatActivity() {
         scrollView.addView(monthContainer)
         rootLayout.addView(scrollView)
         calendarContainer.addView(rootLayout)
-
-        saveDaysToSharedPreferences(daysList) // Сохраняем список тренировочных дней
     }
 
     // Create a section for each month
@@ -1172,7 +1214,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Add empty day to the grid layout
-    private fun addDayViewForNonTrainingDays(date: Calendar, gridLayout: GridLayout) {
+    private fun addEmptyDayForNonTrainingDays(date: Calendar, gridLayout: GridLayout) {
         val displayMetrics = gridLayout.context.resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
         val leftPadding = (24 * displayMetrics.density).toInt()
@@ -1274,82 +1316,74 @@ class MainActivity : AppCompatActivity() {
         gridLayout.addView(emptyView)
     }
 
-    private fun saveDaysToSharedPreferences(daysList: List<Day>) {
+    private fun saveTrainingDaysToSharedPreferences(trainingDaysList: List<Day>) {
         val editor = sharedPreferences.edit()
-        for ((index, day) in daysList.withIndex()) {
-            editor.putLong("DAY_${index}_DATE", day.date.timeInMillis) // Сохраняем время в миллисекундах
-            editor.putBoolean("DAY_${index}_IS_TRAINING_DAY", day.isTrainingDay)
-            editor.putInt("DAY_${index}_WORKOUT_INDEX", day.workoutIndex)
-            editor.putBoolean("DAY_${index}_COMPLETED", day.completed)
-            editor.putBoolean("DAY_${index}_NOT_COMPLETED", day.notCompleted)
-            editor.putString("DAY_${index}_WORKOUT_DESCRIPTION", day.workoutDescription)
+        for ((index, day) in trainingDaysList.withIndex()) {
+            editor.putLong("TRAINING_DAY_${index}_DATE", day.date.timeInMillis) // Сохраняем время в миллисекундах
+            editor.putInt("TRAINING_DAY_${index}_WORKOUT_INDEX", day.workoutIndex) // Сохраняем workoutIndex
+            editor.putBoolean("TRAINING_DAY_${index}_COMPLETED", day.completed) // Сохраняем состояние выполнения
+            editor.putBoolean("TRAINING_DAY_${index}_NOT_COMPLETED", day.notCompleted) // Сохраняем состояние не выполнения
+            editor.putString("TRAINING_DAY_${index}_WORKOUT_DESCRIPTION", day.workoutDescription) // Сохраняем описание тренировки
         }
         editor.apply()
     }
 
-    private fun loadDaysFromSharedPreferences(): MutableList<Day> {
-        val daysList = mutableListOf<Day>()
+    private fun loadTrainingDaysFromSharedPreferences(): MutableList<Day> {
+        val trainingDaysList = mutableListOf<Day>()
         var index = 0
 
-        while (sharedPreferences.contains("DAY_${index}_DATE")) {
-            val dateMillis = sharedPreferences.getLong("DAY_${index}_DATE", 0)
+        while (sharedPreferences.contains("TRAINING_DAY_${index}_DATE")) {
+            val dateMillis = sharedPreferences.getLong("TRAINING_DAY_${index}_DATE", 0)
             val date = Calendar.getInstance().apply { timeInMillis = dateMillis }
-            val isTrainingDay = sharedPreferences.getBoolean("DAY_${index}_IS_TRAINING_DAY", false)
-            val workoutIndex = sharedPreferences.getInt("DAY_${index}_WORKOUT_INDEX", -1)
-            val completed = sharedPreferences.getBoolean("DAY_${index}_COMPLETED", false)
-            val notCompleted = sharedPreferences.getBoolean("DAY_${index}_NOT_COMPLETED", false)
-            val workoutDescription = sharedPreferences.getString("DAY_${index}_WORKOUT_DESCRIPTION", null)
+            val workoutIndex = sharedPreferences.getInt("TRAINING_DAY_${index}_WORKOUT_INDEX", -1)
+            val completed = sharedPreferences.getBoolean("TRAINING_DAY_${index}_COMPLETED", false)
+            val notCompleted = sharedPreferences.getBoolean("TRAINING_DAY_${index}_NOT_COMPLETED", false)
+            val workoutDescription = sharedPreferences.getString("TRAINING_DAY_${index}_WORKOUT_DESCRIPTION", null)
 
-            daysList.add(Day(date, isTrainingDay, workoutIndex, completed, notCompleted, false, workoutDescription))
+            trainingDaysList.add(
+                Day(
+                    date = date,
+                    isTrainingDay = true,
+                    workoutIndex = workoutIndex,
+                    completed = completed,
+                    notCompleted = notCompleted,
+                    isRestDay = false,
+                    workoutDescription = workoutDescription
+                )
+            )
+
             index++
         }
 
-        return daysList
+        return trainingDaysList
     }
 
 
     private fun shiftWorkouts(failedWorkoutIndex: Int) {
-        val failedDay = daysList.find { it.workoutIndex == failedWorkoutIndex } ?: return
+        val trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
 
-        // Помечаем текущий день как "не выполненный"
-        failedDay.notCompleted = true
-        failedDay.completed = false
-
-        // Находим индекс дня в списке
-        val failedDayPosition = daysList.indexOf(failedDay)
+        // Находим индекс не выполненного тренировочного дня
+        val failedDayIndex = trainingDaysList.indexOfFirst { it.workoutIndex == failedWorkoutIndex }
+        if (failedDayIndex == -1) return
+        trainingDaysList[failedDayIndex].isRestDay= true
+        trainingDaysList[failedDayIndex].notCompleted= true
+        Log.e("Mainr", "ff1 ${trainingDaysList[failedWorkoutIndex]}")
 
         // Преобразуем следующий тренировочный день в пустой
-        for (i in failedDayPosition + 1 until daysList.size) {
-            if (daysList[i].isTrainingDay) {
-                val nextEmptyDay = Day(
-                    date = daysList[i].date.clone() as Calendar,
-                    isTrainingDay = false,
-                    workoutIndex = -1,
-                    completed = false,
-                    notCompleted = false,
-                    isRestDay = false,
-                    workoutDescription = null
-                )
-                daysList[i] = nextEmptyDay // Преобразуем следующий тренировочный день в пустой
-                break // Останавливаемся после первого найденного тренировочного дня
-            }
+        if (failedDayIndex + 1 < trainingDaysList.size) {
+            trainingDaysList[failedDayIndex + 1].workoutIndex = -1
+            trainingDaysList[failedDayIndex + 1].workoutDescription = null
         }
 
         // Корректируем индексы всех последующих тренировочных дней
         var skipNextTrainingDay = true // Флаг для пропуска следующего тренировочного дня
-        for (i in failedDayPosition + 2 until daysList.size) {
-            if (daysList[i].isTrainingDay) {
+        for (i in failedDayIndex + 2 until trainingDaysList.size) {
+            if (trainingDaysList[i].isTrainingDay) {
                 if (skipNextTrainingDay) {
-                    // Пропускаем первый следующий тренировочный день
                     skipNextTrainingDay = false
                 } else {
-                    // Для всех остальных тренировочных дней корректируем индекс
-                    var newIndex = daysList[i].workoutIndex - 2
-                    if (newIndex < 0 || newIndex >= workouts.size) {
-                        newIndex = -1 // Если индекс недопустимый, делаем день пустым
-                    }
-                    daysList[i].workoutIndex = newIndex
-                    daysList[i].workoutDescription = workouts.getOrNull(newIndex)
+                    trainingDaysList[i].workoutIndex -= 2
+                    trainingDaysList[i].workoutDescription = workouts.getOrNull(trainingDaysList[i].workoutIndex)
                 }
             }
         }
@@ -1359,7 +1393,7 @@ class MainActivity : AppCompatActivity() {
 
         // Сохраняем обновленные данные
         saveData()
-        saveDaysToSharedPreferences(daysList)
+        saveTrainingDaysToSharedPreferences(trainingDaysList)
 
         // Перегенерируем календарь
         generateCalendar(trainingStartDate)
