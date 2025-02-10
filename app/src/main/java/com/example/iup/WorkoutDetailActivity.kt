@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 
 class WorkoutDetailActivity : AppCompatActivity() {
@@ -31,15 +32,22 @@ class WorkoutDetailActivity : AppCompatActivity() {
         completeButton = findViewById(R.id.completeButton)
         notCompletedButton = findViewById(R.id.notCompletedButton)
         sharedPrefs = getSharedPreferences("WorkoutPrefs", MODE_PRIVATE)
+
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener {
-            // Возвращаемся на предыдущий экран
-            onBackPressed()
+            onBackPressed() // Возвращаемся на предыдущий экран
         }
 
         // Получаем индекс тренировки и описание из Intent
         workoutIndex = intent.getIntExtra("WORKOUT_INDEX", -1)
         val workoutDescription = intent.getStringExtra("WORKOUT_TEXT")
+
+        if (workoutIndex < 0 || workoutIndex >= 48) { // Проверяем корректность индекса
+            Log.e("WorkoutDetailActivity", "Invalid workout index: $workoutIndex")
+            finish() // Закрываем активность, если индекс некорректный
+            return
+        }
+
         workoutTextView.text = workoutDescription
 
         // Логика для кнопки "Выполнил"
@@ -57,7 +65,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
-            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex)
+            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex) // Передаем индекс тренировки
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
@@ -77,12 +85,11 @@ class WorkoutDetailActivity : AppCompatActivity() {
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
-            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex) // Убедитесь, что индекс передается корректно
+            resultIntent.putExtra("WORKOUT_INDEX", workoutIndex) // Передаем индекс тренировки
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()  // Это возвращает на предыдущий экран
