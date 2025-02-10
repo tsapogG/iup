@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.GradientDrawable
+
 import android.os.Bundle
-import android.view.ViewGroup
+
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
@@ -14,8 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 import android.graphics.Color
 import android.util.Log
-import android.view.View
-
+import com.example.iup.MainActivity
 class WorkoutDetailActivity : AppCompatActivity() {
 
     private lateinit var workoutTextView: TextView
@@ -23,6 +22,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
     private lateinit var notCompletedButton: Button // Кнопка для "Не выполнил"
     private lateinit var sharedPrefs: SharedPreferences
     private var workoutIndex: Int = -1
+    var fdayd = MainActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +62,8 @@ class WorkoutDetailActivity : AppCompatActivity() {
                 completeButton.text = "Выполнить"
                 completeButton.setBackgroundColor(Color.parseColor("#4D908E"))
             }
+            fdayd.fdays+= 0
+
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
@@ -82,6 +84,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
                 notCompletedButton.text = "Не выполнено"
                 notCompletedButton.setBackgroundColor(Color.parseColor("#4D908E"))
             }
+            fdayd.fdays+= 1
 
             // Отправляем результат обратно в MainActivity
             val resultIntent = Intent()
