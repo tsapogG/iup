@@ -62,7 +62,8 @@ class WorkoutDetailActivity : AppCompatActivity() {
                 completeButton.text = "Выполнить"
                 completeButton.setBackgroundColor(Color.parseColor("#4D908E"))
             }
-            fdayd.fdays+= 0
+
+            fdayd.fdays = 0
 
 
             // Отправляем результат обратно в MainActivity
