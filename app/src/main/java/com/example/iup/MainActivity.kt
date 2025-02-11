@@ -1112,7 +1112,7 @@ class MainActivity : AppCompatActivity() {
         val calendar = (startDate.clone() as Calendar).apply {
             set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Начинаем с понедельника
         }
-        val weekss = 16
+        val weekss = 16 + opa
         val endDate = (startDate.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, weekss) } // 16 недель
         calendarContainer.removeAllViews()
 
@@ -1432,19 +1432,11 @@ class MainActivity : AppCompatActivity() {
         val trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
         fdays += 1
 
-        // Находим индекс не выполненного тренировочного дня
-        val failedDayIndex = failedDayIndex
-
-        // Помечаем текущий день как "не выполнен" и устанавливаем workoutIndex = -100
-        trainingDaysList[failedDayIndex].notCompleted = true
-        trainingDaysList[failedDayIndex].workoutIndex = -100 // День больше не является тренировочным
-        Log.e("mainSHIFT", "LISTIND NOW = $failedDayIndex")
-        Log.e("mainSHIFT", "LISTIND  = ${trainingDaysList[failedDayIndex]}")
-
         when (fdays) {
             1 -> {
                 opa += 1 // Обновляем opa
                 ddas += 2 // Обновляем ddas
+
                 // Преобразуем следующий день в день отдыха
                 if (failedDayIndex + 1 < trainingDaysList.size) {
                     trainingDaysList[failedDayIndex + 1].isRestDay = true
@@ -1453,7 +1445,10 @@ class MainActivity : AppCompatActivity() {
                     trainingDaysList[failedDayIndex + 1].workoutIndex = -100 // День больше не является тренировочным
                 }
 
-                // Сдвигаем индексы для последующих тренировок
+                // Добавляем новые тренировочные дни
+                extendTrainingDaysList(trainingDaysList, 2)
+
+                // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 2 until trainingDaysList.size) {
                     if (trainingDaysList[i].isTrainingDay && trainingDaysList[i].workoutIndex != -100) {
                         trainingDaysList[i].workoutIndex -= 2
@@ -1461,18 +1456,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Вычисляем количество "вылетевших" тренировок
-                val removedWorkoutsCount = calculateRemovedWorkoutsCount(trainingDaysList, failedDayIndex)
-
-                if (removedWorkoutsCount > 0) {
-                    // Добавляем новые тренировочные дни в конец списка
-                    addNewTrainingDays(trainingDaysList, removedWorkoutsCount)
-                    Log.d("ShiftWorkouts", "Added $removedWorkoutsCount new training days")
-                }
             }
 
             2 -> {
-                // Если fdays == 2, делаем паузу на неделю (текущий день + 2 следующих)
                 opa += 2 // Обновляем opa
                 ddas += 3 // Обновляем ddas
 
@@ -1486,7 +1472,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Сдвигаем индексы для тренировок после недельного перерыва
+                // Добавляем новые тренировочные дни
+                extendTrainingDaysList(trainingDaysList, 3)
+
+                // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 3 until trainingDaysList.size) {
                     if (trainingDaysList[i].isTrainingDay && trainingDaysList[i].workoutIndex != -100) {
                         trainingDaysList[i].workoutIndex -= 3 // Сдвигаем на 3, так как пропускается 3 дня
@@ -1494,20 +1483,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Вычисляем количество "вылетевших" тренировок после недельного перерыва
-                val removedWorkoutsCount = calculateRemovedWorkoutsCount(trainingDaysList, failedDayIndex)
-
-                if (removedWorkoutsCount > 0) {
-                    // Добавляем новые тренировочные дни в конец списка
-                    addNewTrainingDays(trainingDaysList, removedWorkoutsCount)
-                    Log.d("ShiftWorkouts", "Added $removedWorkoutsCount new training days after week break")
-                }
             }
 
             3 -> {
                 opa += 1 // Обновляем opa
                 ddas += 2 // Обновляем ddas
-                // Если fdays == 3, сдвигаем тренировки как при первом пропуске (fdays == 1)
+
+                // Преобразуем следующий день в день отдыха
                 if (failedDayIndex + 1 < trainingDaysList.size) {
                     trainingDaysList[failedDayIndex + 1].isRestDay = true
                     trainingDaysList[failedDayIndex + 1].isTrainingDay = false
@@ -1515,7 +1497,10 @@ class MainActivity : AppCompatActivity() {
                     trainingDaysList[failedDayIndex + 1].workoutIndex = -100 // День больше не является тренировочным
                 }
 
-                // Сдвигаем индексы для последующих тренировок
+                // Добавляем новые тренировочные дни
+                extendTrainingDaysList(trainingDaysList, 2)
+
+                // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 2 until trainingDaysList.size) {
                     if (trainingDaysList[i].isTrainingDay && trainingDaysList[i].workoutIndex != -100) {
                         trainingDaysList[i].workoutIndex -= 2
@@ -1523,17 +1508,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Вычисляем количество "вылетевших" тренировок
-                val removedWorkoutsCount = calculateRemovedWorkoutsCount(trainingDaysList, failedDayIndex)
-
-                if (removedWorkoutsCount > 0) {
-                    // Добавляем новые тренировочные дни в конец списка
-                    addNewTrainingDays(trainingDaysList, removedWorkoutsCount)
-                    Log.d("ShiftWorkouts", "Added $removedWorkoutsCount new training days after third skip")
-                }
-
                 // Показываем диалог с советом
                 showLoadReductionAdvice()
+
             }
         }
 
@@ -1560,51 +1537,7 @@ class MainActivity : AppCompatActivity() {
     private fun showRestDayMessage() {
         Toast.makeText(this, "Это день отдыха!", Toast.LENGTH_SHORT).show()
     }
-    private fun calculateRemovedWorkoutsCount(trainingDaysList: MutableList<Day>, failedDayIndex: Int): Int {
-        var removedCount = 0
 
-        // Проходим по всем тренировочным дням после failedDayIndex
-        for (i in failedDayIndex + 3 until trainingDaysList.size) { // Пропускаем три дня отдыха
-            if (trainingDaysList[i].isTrainingDay && trainingDaysList[i].workoutIndex >= workouts.size) {
-                removedCount++
-            }
-        }
-
-        return removedCount
-    }
-    private fun addNewTrainingDays(trainingDaysList: MutableList<Day>, count: Int) {
-        if (count <= 0) return
-
-        val lastDate = trainingDaysList.lastOrNull()?.date ?: return
-
-        repeat(count) {
-            // Создаем новую дату для нового тренировочного дня
-            val newDate = (lastDate.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_MONTH, 7) // Добавляем неделю для нового тренировочного дня
-            }
-
-            // Создаем новый тренировочный день
-            val newWorkoutIndex = it * 2 // Индекс новой тренировки (например, каждая вторая тренировка)
-            val newWorkoutDescription = workouts.getOrNull(newWorkoutIndex)
-
-            if (newWorkoutDescription != null) {
-                val newTrainingDay = Day(
-                    date = newDate,
-                    isTrainingDay = true,
-                    workoutIndex = newWorkoutIndex,
-                    completed = false,
-                    notCompleted = false,
-                    isRestDay = false,
-                    workoutDescription = newWorkoutDescription
-                )
-
-                // Добавляем новый тренировочный день в список
-                trainingDaysList.add(newTrainingDay)
-            } else {
-                Log.e("AddNewTrainingDays", "Не удалось найти описание для новой тренировки с индексом $newWorkoutIndex")
-            }
-        }
-    }
     private fun showLoadReductionAdvice() {
         AlertDialog.Builder(this)
             .setTitle("Рекомендация")
@@ -1615,6 +1548,48 @@ class MainActivity : AppCompatActivity() {
             .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
             .show()
     }
+    private fun extendTrainingDaysList(trainingDaysList: MutableList<Day>, count: Int) {
+        if (count <= 0) return
+
+        // Находим последнюю дату в списке и определяем начальную дату для новых дней
+        val lastDate = trainingDaysList.lastOrNull()?.date ?: return
+        val newStartDate = (lastDate.clone() as Calendar).apply {
+            add(Calendar.DAY_OF_MONTH, 1) // Добавляем один день после последнего дня
+        }
+
+        repeat(count) { index ->
+            // Создаем новую дату для дня
+            val newDate = (newStartDate.clone() as Calendar).apply {
+                add(Calendar.DAY_OF_MONTH, index) // Добавляем индекс дней
+            }
+
+            // Определяем является ли день тренировочным (0-й, 2-й и 4-й день недели)
+            val dayOffset = ((newDate.timeInMillis - newStartDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+            val isTrainingDayByIndex = dayOffset >= 0 && (dayOffset % 7 == 0 || dayOffset % 7 == 2 || dayOffset % 7 == 4)
+
+            if (isTrainingDayByIndex) {
+                // Это тренировочный день
+                val workoutIndex = workouts.size + index - 1 // Индекс новой тренировки
+                val newTrainingDay = Day(
+                    date = newDate,
+                    isTrainingDay = true,
+                    workoutIndex = workoutIndex,
+                    completed = false,
+                    notCompleted = false,
+                    isRestDay = false,
+                    workoutDescription = null // workoutDescription всегда null
+                )
+
+                trainingDaysList.add(newTrainingDay)
+                saveTrainingDaysToSharedPreferences(trainingDaysList)
+                Log.e("INDHHHHH", "INNGJGJGJJG $workoutIndex")
+                Log.e("INDHHHHH", "INNGJGJGJJG ${trainingDaysList[trainingDaysList.size-1].workoutIndex}")
+            }
+        }
+
+        Log.d("ExtendTrainingDays", "Added $count new days to the training list")
+    }
+
 
 }
 /*private fun makeDayRest(workoutIndex: Int) {
