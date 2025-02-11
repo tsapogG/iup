@@ -315,6 +315,7 @@ class MainActivity : AppCompatActivity() {
         experienceLevel = sharedPreferences.getInt("experienceLevel", 0)
         fdays = sharedPreferences.getInt("fdays", 0)
         trainingDaysList = loadTrainingDaysFromSharedPreferences()
+        opa = sharedPreferences.getInt("opa",0)
         val startDateMillis = sharedPreferences.getLong("startDate", 0)
         if (startDateMillis != 0L) {
             trainingStartDate.timeInMillis = startDateMillis
@@ -1077,14 +1078,23 @@ class MainActivity : AppCompatActivity() {
             set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Начинаем с понедельника
         }
         val endDate = (startDate.clone() as Calendar).apply { add(Calendar.WEEK_OF_YEAR, 16) } // 16 недель
-
         var workoutCounter = 0 // Счетчик для индексов тренировок
 
         while (calendar.before(endDate)) {
             val dayIndex = ((calendar.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
             if (dayIndex >= 0 && (dayIndex % 7 == 0 || dayIndex % 7 == 2 || dayIndex % 7 == 4)) {
                 // Это тренировочный день
                 val workoutIndex = workoutCounter.coerceIn(0, workouts.size - 1)
+
+                // Определяем количество выходных дней после тренировки
+                val restDaysAfter = when (dayIndex % 7) {
+                    0 -> 0 // После понедельника — 1 выходной день
+                    2 -> 2 // После среды — 1 выходной день
+                    4 -> 4 // После пятницы — 2 выходных дня
+                    else -> 0 // Для других дней (на всякий случай)
+                }
+
                 val day = Day(
                     date = calendar.clone() as Calendar,
                     isTrainingDay = true,
@@ -1092,15 +1102,18 @@ class MainActivity : AppCompatActivity() {
                     completed = false,
                     notCompleted = false,
                     isRestDay = false,
-                    workoutDescription = workouts.getOrNull(workoutIndex)
+                    workoutDescription = workouts.getOrNull(workoutIndex),
+                    restDaysAfter = restDaysAfter // Устанавливаем количество выходных дней
                 )
+
                 trainingDaysList.add(day)
                 workoutCounter++
             }
+
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        Log.d("GenerateTrainingDays", "Generated $trainingDaysList training days")
+        Log.d("GenerateTrainingDays", "Generated ${trainingDaysList.size} training days")
         return trainingDaysList
     }
 
@@ -1355,13 +1368,14 @@ class MainActivity : AppCompatActivity() {
     private fun saveTrainingDaysToSharedPreferences(trainingDaysList: List<Day>) {
         val editor = sharedPreferences.edit()
         for ((index, day) in trainingDaysList.withIndex()) {
-            editor.putBoolean("TRAINING_DAY_${index}", day.isTrainingDay)
+            editor.putBoolean("TRAINING_DAY_${index}_IS_TRAINING_DAY", day.isTrainingDay)
             editor.putLong("TRAINING_DAY_${index}_DATE", day.date.timeInMillis)
             editor.putInt("TRAINING_DAY_${index}_WORKOUT_INDEX", day.workoutIndex)
             editor.putBoolean("TRAINING_DAY_${index}_COMPLETED", day.completed)
             editor.putBoolean("TRAINING_DAY_${index}_NOT_COMPLETED", day.notCompleted)
             editor.putString("TRAINING_DAY_${index}_WORKOUT_DESCRIPTION", day.workoutDescription)
             editor.putBoolean("TRAINING_DAY_${index}_REST_DAY", day.isRestDay)
+            editor.putInt("TRAINING_DAY_${index}_REST_DAYS_AFTER", day.restDaysAfter) // Сохраняем restDaysAfter
         }
         editor.apply()
     }
@@ -1379,8 +1393,8 @@ class MainActivity : AppCompatActivity() {
             val notCompleted = sharedPreferences.getBoolean("TRAINING_DAY_${index}_NOT_COMPLETED", false)
             val workoutDescription = sharedPreferences.getString("TRAINING_DAY_${index}_WORKOUT_DESCRIPTION", null)
             val isRestDay = sharedPreferences.getBoolean("TRAINING_DAY_${index}_REST_DAY", false)
-            val isTrainingDay = sharedPreferences.getBoolean("TRAINING_DAY_${index}", true)
-
+            val isTrainingDay = sharedPreferences.getBoolean("TRAINING_DAY_${index}_IS_TRAINING_DAY", true)
+            val restDaysAfter = sharedPreferences.getInt("TRAINING_DAY_${index}_REST_DAYS_AFTER", 0) // Загружаем restDaysAfter
 
             trainingDaysList.add(
                 Day(
@@ -1390,7 +1404,8 @@ class MainActivity : AppCompatActivity() {
                     completed = completed,
                     notCompleted = notCompleted,
                     isRestDay = isRestDay,
-                    workoutDescription = workoutDescription
+                    workoutDescription = workoutDescription,
+                    restDaysAfter = restDaysAfter // Инициализируем новое поле
                 )
             )
 
@@ -1429,7 +1444,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun shiftWorkouts(failedDayIndex: Int) {
-        val trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+        var trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
         fdays += 1
 
         when (fdays) {
@@ -1444,9 +1459,10 @@ class MainActivity : AppCompatActivity() {
                     trainingDaysList[failedDayIndex + 1].workoutDescription = null
                     trainingDaysList[failedDayIndex + 1].workoutIndex = -100 // День больше не является тренировочным
                 }
-
-                // Добавляем новые тренировочные дни
-                extendTrainingDaysList(trainingDaysList, 2)
+                saveTrainingDaysToSharedPreferences(trainingDaysList)
+                generate22(2)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+                Log.d("ПИЗДАААААААууу","OGOOOOOO11 $trainingDaysList")
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 2 until trainingDaysList.size) {
@@ -1455,6 +1471,9 @@ class MainActivity : AppCompatActivity() {
                         trainingDaysList[i].workoutDescription = workouts.getOrNull(trainingDaysList[i].workoutIndex)
                     }
                 }
+                saveTrainingDaysToSharedPreferences(trainingDaysList)
+                Log.d("ПИЗДАААААААууу","OGOOOOOO $trainingDaysList")
+
 
             }
 
@@ -1472,8 +1491,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Добавляем новые тренировочные дни
-                extendTrainingDaysList(trainingDaysList, 3)
+                saveTrainingDaysToSharedPreferences(trainingDaysList)
+                generate22(3)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 3 until trainingDaysList.size) {
@@ -1497,8 +1518,10 @@ class MainActivity : AppCompatActivity() {
                     trainingDaysList[failedDayIndex + 1].workoutIndex = -100 // День больше не является тренировочным
                 }
 
-                // Добавляем новые тренировочные дни
-                extendTrainingDaysList(trainingDaysList, 2)
+                saveTrainingDaysToSharedPreferences(trainingDaysList)
+                generate22(2)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
                 for (i in failedDayIndex + 2 until trainingDaysList.size) {
@@ -1548,46 +1571,67 @@ class MainActivity : AppCompatActivity() {
             .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
             .show()
     }
-    private fun extendTrainingDaysList(trainingDaysList: MutableList<Day>, count: Int) {
-        if (count <= 0) return
-
-        // Находим последнюю дату в списке и определяем начальную дату для новых дней
-        val lastDate = trainingDaysList.lastOrNull()?.date ?: return
-        val newStartDate = (lastDate.clone() as Calendar).apply {
-            add(Calendar.DAY_OF_MONTH, 1) // Добавляем один день после последнего дня
-        }
-
-        repeat(count) { index ->
-            // Создаем новую дату для дня
-            val newDate = (newStartDate.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_MONTH, index) // Добавляем индекс дней
-            }
-
-            // Определяем является ли день тренировочным (0-й, 2-й и 4-й день недели)
-            val dayOffset = ((newDate.timeInMillis - newStartDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
-            val isTrainingDayByIndex = dayOffset >= 0 && (dayOffset % 7 == 0 || dayOffset % 7 == 2 || dayOffset % 7 == 4)
-
-            if (isTrainingDayByIndex) {
-                // Это тренировочный день
-                val workoutIndex = workouts.size + index - 1 // Индекс новой тренировки
-                val newTrainingDay = Day(
-                    date = newDate,
+    private fun generate22(count: Int){
+        val trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+        for (i in 0 until count){
+            if(trainingDaysList[trainingDaysList.size - 1].restDaysAfter==0){
+                var lastDate = trainingDaysList[trainingDaysList.size - 1].date
+                val newStartDate = (lastDate.clone() as Calendar).apply {
+                    add(Calendar.DAY_OF_MONTH, 2) // Добавляем 2 дня после последнего дня
+                }
+                val day = Day(
+                    date = newStartDate,
                     isTrainingDay = true,
-                    workoutIndex = workoutIndex,
+                    workoutIndex = workouts.size + i  ,
                     completed = false,
                     notCompleted = false,
                     isRestDay = false,
-                    workoutDescription = null // workoutDescription всегда null
+                    workoutDescription = null,
+                    restDaysAfter = 2 // Устанавливаем количество выходных дней
                 )
 
-                trainingDaysList.add(newTrainingDay)
-                saveTrainingDaysToSharedPreferences(trainingDaysList)
-                Log.e("INDHHHHH", "INNGJGJGJJG $workoutIndex")
-                Log.e("INDHHHHH", "INNGJGJGJJG ${trainingDaysList[trainingDaysList.size-1].workoutIndex}")
+                trainingDaysList.add(day)
+            }
+            else if(trainingDaysList[trainingDaysList.size - 1].restDaysAfter==2){
+                var lastDate = trainingDaysList[trainingDaysList.size - 1].date
+                val newStartDate = (lastDate.clone() as Calendar).apply {
+                    add(Calendar.DAY_OF_MONTH, 2) // Добавляем 2 дня после последнего дня
+                }
+                val day = Day(
+                    date = newStartDate,
+                    isTrainingDay = true,
+                    workoutIndex = workouts.size + i  ,
+                    completed = false,
+                    notCompleted = false,
+                    isRestDay = false,
+                    workoutDescription = null,
+                    restDaysAfter = 4 // Устанавливаем количество выходных дней
+                )
+
+                trainingDaysList.add(day)
+            }
+            else if(trainingDaysList[trainingDaysList.size - 1].restDaysAfter==4){
+                var lastDate = trainingDaysList[trainingDaysList.size - 1].date
+                val newStartDate = (lastDate.clone() as Calendar).apply {
+                    add(Calendar.DAY_OF_MONTH, 3) // Добавляем 2 дня после последнего дня
+                }
+                val day = Day(
+                    date = newStartDate,
+                    isTrainingDay = true,
+                    workoutIndex = workouts.size + i  ,
+                    completed = false,
+                    notCompleted = false,
+                    isRestDay = false,
+                    workoutDescription = null,
+                    restDaysAfter = 0 // Устанавливаем количество выходных дней
+                )
+
+                trainingDaysList.add(day)
             }
         }
+        saveTrainingDaysToSharedPreferences(trainingDaysList)
+        Log.d("GenerateTrainingDays", "Generated $trainingDaysList training days")
 
-        Log.d("ExtendTrainingDays", "Added $count new days to the training list")
     }
 
 

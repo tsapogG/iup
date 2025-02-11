@@ -9,5 +9,6 @@ data class Day(
     var completed: Boolean = false,
     var notCompleted: Boolean = false,
     var isRestDay: Boolean = false, // Флаг "день отдыха",
-    var workoutDescription: String? = null
+    var workoutDescription: String? = null,
+    var restDaysAfter: Int = 0
 )

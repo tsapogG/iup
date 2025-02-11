@@ -41,11 +41,7 @@ class WorkoutDetailActivity : AppCompatActivity() {
         dayIndex = intent.getIntExtra("DAY_INDEX", -1)
         val workoutDescription = intent.getStringExtra("WORKOUT_TEXT")
         Log.d("IIIIIIIIIIIIIIIIIIIIIIIIIIII", "IIIIIIIIII = $dayIndex")
-        if (dayIndex < 0 || dayIndex >= 48) { // Проверяем корректность индекса
-            Log.e("WorkoutDetailActivity", "Invalid workout index: $dayIndex")
-            finish() // Закрываем активность, если индекс некорректный
-            return
-        }
+        
 
         workoutTextView.text = workoutDescription
 
