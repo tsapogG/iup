@@ -1046,10 +1046,7 @@ class MainActivity : AppCompatActivity() {
             val dayIndex = data?.getIntExtra("DAY_INDEX", -1) ?: -1
 
             // Проверяем корректность индекса тренировки
-            if (dayIndex < 0 || dayIndex >= workouts.size) {
-                Log.e("MainActivity", "Invalid day index: $dayIndex")
-                return
-            }
+
 
             // Загружаем список тренировочных дней
             val trainingDaysList = loadTrainingDaysFromSharedPreferences()
@@ -1451,6 +1448,9 @@ class MainActivity : AppCompatActivity() {
             1 -> {
                 opa += 1 // Обновляем opa
                 ddas += 2 // Обновляем ddas
+                generate22(2)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+                Log.d("ПИЗДАААААААууу","OGOOOOOO11 $trainingDaysList")
 
                 // Преобразуем следующий день в день отдыха
                 if (failedDayIndex + 1 < trainingDaysList.size) {
@@ -1460,8 +1460,7 @@ class MainActivity : AppCompatActivity() {
                     trainingDaysList[failedDayIndex + 1].workoutIndex = -100 // День больше не является тренировочным
                 }
                 saveTrainingDaysToSharedPreferences(trainingDaysList)
-                generate22(2)
-                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+
                 Log.d("ПИЗДАААААААууу","OGOOOOOO11 $trainingDaysList")
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
@@ -1480,7 +1479,8 @@ class MainActivity : AppCompatActivity() {
             2 -> {
                 opa += 2 // Обновляем opa
                 ddas += 3 // Обновляем ddas
-
+                generate22(3)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
                 // Преобразуем текущий день и два следующих в дни отдыха
                 for (i in failedDayIndex until failedDayIndex + 3) {
                     if (i < trainingDaysList.size) {
@@ -1492,8 +1492,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 saveTrainingDaysToSharedPreferences(trainingDaysList)
-                generate22(3)
-                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+
 
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
@@ -1509,6 +1508,8 @@ class MainActivity : AppCompatActivity() {
             3 -> {
                 opa += 1 // Обновляем opa
                 ddas += 2 // Обновляем ddas
+                generate22(2)
+                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
 
                 // Преобразуем следующий день в день отдыха
                 if (failedDayIndex + 1 < trainingDaysList.size) {
@@ -1519,8 +1520,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 saveTrainingDaysToSharedPreferences(trainingDaysList)
-                generate22(2)
-                trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
+
 
 
                 // Сдвигаем индексы для последующих тренировок, включая новые дни
