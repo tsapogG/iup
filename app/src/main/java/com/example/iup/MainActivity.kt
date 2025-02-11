@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.SeekBar
@@ -33,7 +34,7 @@ import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Locale
 import com.example.iup.utils.Day
-
+import kotlin.math.abs
 
 
 class MainActivity : AppCompatActivity() {
@@ -138,6 +139,7 @@ class MainActivity : AppCompatActivity() {
         val experienceLevelSpinner = dialogView.findViewById<Spinner>(R.id.experienceLevelSpinner)
         val loadPercentageSeekBar = dialogView.findViewById<SeekBar>(R.id.loadPercentageSeekBar)
         val loadPercentageTextView = dialogView.findViewById<TextView>(R.id.loadPercentageTextView)
+        val hah = dialogView.findViewById<ImageButton>(R.id.experienceLevelInfoButton)
 
         // Настройка Spinner
         val levels = resources.getStringArray(R.array.experience_levels)
@@ -170,6 +172,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        hah.setOnClickListener(){
+            haha()}
+
 
         // Настройка SeekBar в зависимости от уровня
         experienceLevelSpinner.onItemSelectedListener =
@@ -256,6 +261,14 @@ class MainActivity : AppCompatActivity() {
                 val deadliftPressNew = String.format("%.2f", deadlift * loadFactor2)
 
                 //String.format("%.2f",deadlift * loadFactor2 )
+                val benchPressDifference = abs(benchPress - (benchPress * loadFactor2).toInt())
+                val squatDifference = abs(squat - (squat * loadFactor2).toInt())
+                val deadliftDifference = abs(deadlift - (deadlift * loadFactor2).toInt())
+
+// Проверяем разницу для каждого упражнения
+                if (benchPressDifference <= 5 || squatDifference <= 5 || deadliftDifference <= 5) {
+                    haha2()
+                }
 
 
                 // Находим TextView в разметке
@@ -1632,6 +1645,40 @@ class MainActivity : AppCompatActivity() {
         saveTrainingDaysToSharedPreferences(trainingDaysList)
         Log.d("GenerateTrainingDays", "Generated $trainingDaysList training days")
 
+    }
+    private fun haha() {
+        AlertDialog.Builder(this)
+            .setTitle("Справка")
+            .setMessage("Новичок\n" +
+                    "Занимаюсь менее года.\n" +
+                    "Тренируюсь 2–3 раза в неделю.\n" +
+                    "Основная цель — улучшить здоровье или внешний вид.\n" +
+                    "Часто ошибаюсь в технике, быстро устаю.\n" +
+                    "Любитель\n" +
+                    "Занимаюсь от 1 до 5 лет.\n" +
+                    "Тренируюсь 3–5 раз в неделю.\n" +
+                    "Имею базовые знания и правильную технику.\n" +
+                    "Ставлю конкретные цели (например, пробежать марафон или увеличить силу).\n" +
+                    "Профессионал\n" +
+                    "Занимаюсь более 5 лет.\n" +
+                    "Тренируюсь почти ежедневно по строгому плану.\n" +
+                    "Достиг высоких результатов (участие в соревнованиях, титулы).\n" +
+                    "Спорт — основная часть жизни, возможно, профессия.")
+            .setPositiveButton("OK") { _, _ ->
+                // Можно добавить логику перехода в настройки, если нужно
+            }
+            .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
+            .show()
+    }
+    private fun haha2() {
+        AlertDialog.Builder(this)
+            .setTitle("Рекомендация")
+            .setMessage("Разница рабочих весов между подходами может быть слишком маленькой. Рекомендуем Вам докупить уменьшенные блины, чтобы более точно регулировать вес")
+            .setPositiveButton("OK") { _, _ ->
+                // Можно добавить логику перехода в настройки, если нужно
+            }
+            .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
+            .show()
     }
 
 

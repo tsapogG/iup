@@ -52,21 +52,37 @@
         android:inputType="number"
         android:background="@drawable/border_background" />
 
-    <TextView
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Уровень опыта"
-        android:textSize="16sp"
-        android:paddingTop="16dp"
-        android:paddingBottom="4dp" />
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
 
+        <TextView
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="4dp"
+            android:text="Уровень опыта"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/experienceLevelInfoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:padding="18dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Информация об уровне опыта"
+            android:src="@drawable/ic_info" />
+    </LinearLayout>
     <Spinner
         android:id="@+id/experienceLevelSpinner"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:entries="@array/experience_levels"
-        android:background="@drawable/border_background" />
-
+        android:background="@drawable/border_background"
+        android:entries="@array/experience_levels" />
     <SeekBar
         android:id="@+id/loadPercentageSeekBar"
         android:layout_width="match_parent"
@@ -95,4 +111,10 @@
         android:layout_height="wrap_content"
         android:text="Дата не выбрана"
         android:paddingTop="8dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 </LinearLayout>
