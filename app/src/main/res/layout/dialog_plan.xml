@@ -112,9 +112,5 @@
         android:text="Дата не выбрана"
         android:paddingTop="8dp" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+
 </LinearLayout>

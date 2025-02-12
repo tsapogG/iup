@@ -60,56 +60,66 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("DefaultLocale", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContentView(R.layout.activity_main)
 
+        // Инициализация SharedPreferences и других переменных
         sharedPreferences = getSharedPreferences("TrainingPrefs", MODE_PRIVATE)
         calendarContainer = findViewById(R.id.calendarContainer)
 
-        val settingsButton = findViewById<Button>(R.id.settingsButton)
-        settingsButton.setOnClickListener {
-            openSettingsDialog()
-        }
-        val resetButton = findViewById<Button>(R.id.resetButton)
-        resetButton.setOnClickListener {
-            showResetConfirmationDialog() // Показываем диалог подтверждения
-        }
-
-        if (isFirstRun()) {
-            showSetupDialog()
-        } else {
-            loadSavedData()
-            generateWorkouts()
+        // Проверяем, является ли это первый запуск
 
 
-            Log.e("MainActivity","cписок $trainingDaysList")
+        // Если это не первый запуск, загружаем сохраненные данные и генерируем тренировки
+        loadSavedData()
+        generateWorkouts()
 
-            generateCalendar(trainingStartDate)
-        }
+        Log.e("MainActivity", "список $trainingDaysList")
+        generateCalendar(trainingStartDate)
+
+        // Рассчитываем новые значения нагрузки
         val loadFactor2 = 1 + (loadPercentage / 100.0)
         val benchPressNew = String.format("%.2f", benchPress * loadFactor2)
         val squatNew = String.format("%.2f", squat * loadFactor2)
         val deadliftPressNew = String.format("%.2f", deadlift * loadFactor2)
 
-        //String.format("%.2f",deadlift * loadFactor2 )
-
-
-        // Находим TextView в разметке
+        // Находим TextView в разметке и устанавливаем текст
         val benchPressText = findViewById<TextView>(R.id.benchPressText)
         val squatText = findViewById<TextView>(R.id.squatText)
         val deadliftText = findViewById<TextView>(R.id.deadliftText)
 
-        // Устанавливаем текст в TextView
         benchPressText.text = "Новый максимальный жим: $benchPressNew"
         squatText.text = "Новый максимальный присед: $squatNew"
         deadliftText.text = "Новый максимальный становая тяга: $deadliftPressNew"
 
+        // Настройка кнопки "Настройки"
+        val settingsButton = findViewById<Button>(R.id.settingsButton)
+        settingsButton.setOnClickListener {
+            openSettingsDialog()
+        }
+        if (isMinDate(trainingStartDate)) {
+            showSetupDialog() // Открываем диалог настройки
+            return // Прерываем выполнение onCreate, чтобы не выполнять дальнейший код
+        }
+
+        // Настройка кнопки "Сброс"
+        val resetButton = findViewById<Button>(R.id.resetButton)
+        resetButton.setOnClickListener {
+            showResetConfirmationDialog() // Показываем диалог подтверждения сброса
+        }
+    }
+    private fun isMinDate(calendar: Calendar): Boolean {
+        return calendar.timeInMillis == 0L // Минимальная дата имеет значение 0 миллисекунд
     }
 
 
     private fun isFirstRun(): Boolean {
-        return sharedPreferences.getBoolean("isFirstRun", true)
+        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+        if (isFirstRun) {
+            // Сохраняем флаг, чтобы больше не считать это первым запуском
+            sharedPreferences.edit().putBoolean("isFirstRun", false).apply()
+        }
+        return isFirstRun
     }
 
     private fun openSettingsDialog() {
@@ -148,6 +158,7 @@ class MainActivity : AppCompatActivity() {
 
         // Предзаполнение данных, если это изменение плана
         if (!isFirstSetup) {
+
             benchPressInput.setText(benchPress.toString())
             squatInput.setText(squat.toString())
             deadliftInput.setText(deadlift.toString())
@@ -341,8 +352,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSetupDialog() {
-        showPlanDialog(isFirstSetup = true)
-
+        showPlanDialog(isFirstSetup = false)
     }
 
     private fun showPlanInputDialog() {
