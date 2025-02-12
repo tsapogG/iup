@@ -1622,6 +1622,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Показываем диалог с советом
                 showLoadReductionAdvice()
+                fdays = 0
 
             }
         }
