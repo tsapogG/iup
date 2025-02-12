@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     var opa = 0 // Переменная для корректировки индексов тренировок
     var fdays = 0
     private var trainingStartDate: Calendar = Calendar.getInstance()
-    private var experienceLevel: Int = 0 // 0 - Новичок, 1 - Любитель, 2 - Профессионал
+    private var experienceLevel: Int = 0
     private var loadPercentage: Int = 0
 
 
@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         if (isFirstRun()) {
             // Если это первый запуск, показываем диалог настройки плана тренировок
             showPlanDialog(isFirstSetup = true)
+            generateWorkouts()
         } else {
             // Если это не первый запуск, загружаем сохраненные данные и генерируем тренировки
             loadSavedData()
@@ -110,9 +111,6 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener {
             showResetConfirmationDialog() // Показываем диалог подтверждения сброса
         }
-    }
-    private fun isMinDate(calendar: Calendar): Boolean {
-        return calendar.timeInMillis == 0L // Минимальная дата имеет значение 0 миллисекунд
     }
 
 
@@ -256,6 +254,7 @@ class MainActivity : AppCompatActivity() {
                 deadlift = getIntFromInput(deadliftInput)
                 experienceLevel = experienceLevelSpinner.selectedItemPosition
                 loadPercentage = loadPercentageSeekBar.progress
+                saveData()
 
                 Log.d(
                     "PlanDialog",
@@ -289,6 +288,7 @@ class MainActivity : AppCompatActivity() {
                 benchPressText.text = "Новый максимальный жим: $benchPressNew"
                 squatText.text = "Новый максимальный присед: $squatNew"
                 deadliftText.text = "Новый максимальный становая тяга: $deadliftPressNew"
+                generateWorkouts()
                 generateCalendar(trainingStartDate)
             }
             .setNegativeButton("Отмена") { _, _ ->
@@ -324,7 +324,6 @@ class MainActivity : AppCompatActivity() {
         selectedDateTextView.text = formattedDate
 
         // Пересоздаем список тренировочных дней при изменении даты
-        val trainingDaysList = generateTrainingDaysList(trainingStartDate)
         generateCalendar(trainingStartDate)
     }
 
@@ -367,12 +366,11 @@ class MainActivity : AppCompatActivity() {
     private fun generateWorkouts() {
         // Вычисляем коэффициент нагрузки на основе выбранного процента
         val loadFactor = 1 + (loadPercentage / 100.0)
-
-
         // Обновляем тренировочный план на основе введенных данных и коэффициента нагрузки
         val benchPressNew = benchPress * loadFactor
         val squatNew = squat * loadFactor
         val deadliftPressNew = deadlift * loadFactor
+        Log.e("МегаМозг", "жим $benchPress присед $squat тяга $deadlift")
 
         // Создаем тренировочный план
         workouts = arrayOf(
@@ -383,7 +381,7 @@ class MainActivity : AppCompatActivity() {
                     "3. 2 x ${String.format("%.2f", squat * 0.8)} kg \n" +
                     "4. 1 x ${String.format("%.2f", squat * 0.85)} kg \n" +
                     "Жим лежа: \n" +
-                    "1. 5 x ${String.format("%.2f", benchPress * 0.6)} kg \n" +
+                    "1. 5 x ${String.format("%.2f", benchPressNew * 0.6)} kg \n" +
                     "2. 5 x ${String.format("%.2f", benchPress * 0.65)} kg \n" +
                     "3. 5 x ${String.format("%.2f", benchPress * 0.7)} kg \n" +
                     "4. 4 x ${String.format("%.2f", benchPress * 0.75)} kg \n" +
@@ -1162,6 +1160,7 @@ class MainActivity : AppCompatActivity() {
             trainingDaysList = loadTrainingDaysFromSharedPreferences()
         } else {
             // Иначе генерируем новый список тренировочных дней
+            generateWorkouts()
             trainingDaysList = generateTrainingDaysList(startDate)
             saveTrainingDaysToSharedPreferences(trainingDaysList) // Сохраняем новый список
         }
@@ -1359,7 +1358,7 @@ class MainActivity : AppCompatActivity() {
                     // Если тренировка еще не трогалась, открываем детали тренировки
                     if (day.workoutDescription != null) {
                         val intent = Intent(this@MainActivity, WorkoutDetailActivity::class.java)
-                        intent.putExtra("WORKOUT_TEXT", day.workoutDescription)
+                        intent.putExtra("WORKOUT_TEXT", workouts[day.workoutIndex])
                         intent.putExtra("DAY_INDEX", it.tag as Int) // Передаем реальный индекс дня
                         startActivityForResult(intent, WORKOUT_REQUEST_CODE)
                     }
