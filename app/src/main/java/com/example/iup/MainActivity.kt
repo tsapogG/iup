@@ -67,15 +67,21 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("TrainingPrefs", MODE_PRIVATE)
         calendarContainer = findViewById(R.id.calendarContainer)
 
-        // Проверяем, является ли это первый запуск
 
 
-        // Если это не первый запуск, загружаем сохраненные данные и генерируем тренировки
-        loadSavedData()
-        generateWorkouts()
 
-        Log.e("MainActivity", "список $trainingDaysList")
-        generateCalendar(trainingStartDate)
+        if (isFirstRun()) {
+            // Если это первый запуск, показываем диалог настройки плана тренировок
+            showPlanDialog(isFirstSetup = true)
+        } else {
+            // Если это не первый запуск, загружаем сохраненные данные и генерируем тренировки
+            loadSavedData()
+            generateWorkouts()
+            Log.e("MainActivity", "список $trainingDaysList")
+            generateCalendar(trainingStartDate)
+        }
+
+
 
         // Рассчитываем новые значения нагрузки
         val loadFactor2 = 1 + (loadPercentage / 100.0)
@@ -97,10 +103,7 @@ class MainActivity : AppCompatActivity() {
         settingsButton.setOnClickListener {
             openSettingsDialog()
         }
-        if (isMinDate(trainingStartDate)) {
-            showSetupDialog() // Открываем диалог настройки
-            return // Прерываем выполнение onCreate, чтобы не выполнять дальнейший код
-        }
+
 
         // Настройка кнопки "Сброс"
         val resetButton = findViewById<Button>(R.id.resetButton)
@@ -114,12 +117,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun isFirstRun(): Boolean {
-        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
-        if (isFirstRun) {
-            // Сохраняем флаг, чтобы больше не считать это первым запуском
-            sharedPreferences.edit().putBoolean("isFirstRun", false).apply()
-        }
-        return isFirstRun
+        return sharedPreferences.getBoolean("isFirstRun", true)
     }
 
     private fun openSettingsDialog() {
@@ -1039,6 +1037,9 @@ class MainActivity : AppCompatActivity() {
         fdays = 0
         workoutCounter = 0
         trainingDaysList.clear() // Очищаем текущий список тренировочных дней
+        benchPress = 0
+        squat = 0
+        deadlift = 0
 
         // Очищаем сохраненные тренировочные дни
         val allKeys = sharedPreferences.all.keys
@@ -1052,13 +1053,14 @@ class MainActivity : AppCompatActivity() {
         // Восстанавливаем начальный массив тренировок
         generateWorkouts()
 
+
         // Перегенерируем календарь
         trainingStartDate = Calendar.getInstance() // Устанавливаем текущую дату как новую стартовую
         saveData() // Сохраняем сброшенные данные
         generateCalendar(trainingStartDate)
 
-        // Перезапускаем активность для применения изменений
-        recreate()
+
+        showPlanDialog(true)
     }
 
     private val WORKOUT_REQUEST_CODE = 100
