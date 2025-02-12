@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="4dp"
+            android:text="Уровень опыта"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/experienceLevelInfoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:padding="18dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Информация об уровне опыта"
+            android:src="@drawable/ic_info" />
+    </LinearLayout>
+    <Spinner
+        android:id="@+id/experienceLevelSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_background"
+        android:entries="@array/experience_levels" />
+    <SeekBar
+        android:id="@+id/loadPercentageSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/loadPercentageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Процент нагрузки: 0%"
+        android:visibility="visible" />
+
+
+
+</LinearLayout>

@@ -297,6 +297,81 @@ class MainActivity : AppCompatActivity() {
             .show()
 
     }
+    @SuppressLint("SetTextI18n", "DefaultLocale")
+    private fun showPlanDialog2() {
+        val dialogView = layoutInflater.inflate(R.layout.changerur, null)
+
+        val experienceLevelSpinner = dialogView.findViewById<Spinner>(R.id.experienceLevelSpinner)
+        val loadPercentageSeekBar = dialogView.findViewById<SeekBar>(R.id.loadPercentageSeekBar)
+        val loadPercentageTextView = dialogView.findViewById<TextView>(R.id.loadPercentageTextView)
+
+        // Настройка Spinner
+        val levels = resources.getStringArray(R.array.experience_levels)
+        val levelAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, levels)
+        experienceLevelSpinner.adapter = levelAdapter
+        experienceLevelSpinner.setSelection(experienceLevel) // 0 - Новичок, 1 - Любитель, 2 - Профессионал
+
+        // Установка максимального значения SeekBar в зависимости от уровня
+        when (experienceLevel) {
+            0 -> loadPercentageSeekBar.max = 15 // Новичок
+            1 -> loadPercentageSeekBar.max = 7  // Любитель
+            2 -> loadPercentageSeekBar.max = 5  // Профессионал
+        }
+
+        // Обновление текста при изменении SeekBar
+        loadPercentageSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                loadPercentageTextView.text = "Процент нагрузки: $progress%"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        // Обработчик выбора уровня
+        experienceLevelSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> loadPercentageSeekBar.max = 15 // Новичок
+                    1 -> loadPercentageSeekBar.max = 7  // Любитель
+                    2 -> loadPercentageSeekBar.max = 5  // Профессионал
+                }
+                loadPercentageTextView.text = "Процент нагрузки: ${loadPercentageSeekBar.progress}%"
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Создание диалогового окна
+        AlertDialog.Builder(this)
+            .setTitle("Рекомендация")
+            .setMessage("Похоже, это слишком большая нагрузка для вас. Рекомендую снизить её в настройках, и тогда тренировки станут эффективнее.")
+            .setView(dialogView) // Добавляем нашу разметку
+            .setPositiveButton("Сохранить") { _, _ ->
+                experienceLevel = experienceLevelSpinner.selectedItemPosition
+                loadPercentage = loadPercentageSeekBar.progress
+                saveData()
+                generateWorkouts()
+                generateCalendar(trainingStartDate)
+                val loadFactor2 = 1 + (loadPercentage / 100.0)
+                val benchPressNew = String.format("%.2f", benchPress * loadFactor2)
+                val squatNew = String.format("%.2f", squat * loadFactor2)
+                val deadliftPressNew = String.format("%.2f", deadlift * loadFactor2)
+                // Находим TextView в разметке
+                val benchPressText = findViewById<TextView>(R.id.benchPressText)
+                val squatText = findViewById<TextView>(R.id.squatText)
+                val deadliftText = findViewById<TextView>(R.id.deadliftText)
+
+                // Устанавливаем текст в TextView
+                benchPressText.text = "Новый максимальный жим: $benchPressNew"
+                squatText.text = "Новый максимальный присед: $squatNew"
+                deadliftText.text = "Новый максимальный становая тяга: $deadliftPressNew"
+
+            }
+            .setNegativeButton("Отмена") { _, _ -> }
+            .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
+            .show()
+    }
 
 
     private fun saveData() {
@@ -1139,6 +1214,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
     // Generate Calendar
 
     fun generateCalendar(startDate: Calendar) {
@@ -1187,43 +1263,33 @@ class MainActivity : AppCompatActivity() {
         // Реальный индекс дня в списке trainingDaysList
         var dayIndex = 0
 
-        while (calendar.before(endDate)) {
+        while (calendar.before(endDate) && dayIndex < trainingDaysList.size) {
             val monthSection = createMonthSection(calendar) // Создаем секцию для каждого месяца
             monthContainer.addView(monthSection)
             val gridLayout = createDayGridLayout() // Создаем сетку для дней месяца
-
             val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
             val emptyCells = (firstDayOfMonth - Calendar.MONDAY + 7) % 7
             repeat(emptyCells) {
                 addEmptyDay(gridLayout) // Добавляем пустые ячейки перед началом месяца
             }
 
-            while (calendar.get(Calendar.MONTH) == monthSection.tag as Int && calendar.before(endDate)) {
+            while (calendar.get(Calendar.MONTH) == monthSection.tag as Int && calendar.before(endDate) && dayIndex < trainingDaysList.size) {
                 val dayOffset = ((calendar.timeInMillis - startDate.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
-
-                // Проверяем, является ли день тренировочным
                 val isTrainingDayByIndex = dayOffset >= 0 && (dayOffset % 7 == 0 || dayOffset % 7 == 2 || dayOffset % 7 == 4)
 
                 if (isTrainingDayByIndex) {
-                    // Если это тренировочный день, берем объект из списка trainingDaysList
                     if (dayIndex < trainingDaysList.size) {
                         val trainingDay = trainingDaysList[dayIndex]
-                        addDayView(trainingDay, gridLayout, dayIndex) // Передаем реальный индекс дня
-                        dayIndex++ // Увеличиваем индекс только для тренировочных дней
+                        addDayView(trainingDay, gridLayout, dayIndex)
+                        dayIndex++
+                    } else {
+                        break // Прерываем цикл, если все тренировочные дни обработаны
                     }
                 } else {
-                    // Если это не тренировочный день, добавляем пустую ячейку
                     addEmptyDayForNonTrainingDays(calendar.clone() as Calendar, gridLayout)
                 }
-
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
-
-            val remainingCells = (7 - (gridLayout.childCount % 7)) % 7
-            repeat(remainingCells) {
-                addEmptyDay(gridLayout) // Добавляем пустые ячейки после окончания месяца
-            }
-
             monthSection.addView(gridLayout)
         }
 
@@ -1450,6 +1516,7 @@ class MainActivity : AppCompatActivity() {
 
         // Отмечаем день как выполненый и устанавливаем workoutIndex = -100
         trainingDaysList[dayIndex].completed = true
+        trainingDaysList[dayIndex].workoutDescription = workouts[trainingDaysList[dayIndex].workoutIndex]
         trainingDaysList[dayIndex].notCompleted = false
         trainingDaysList[dayIndex].workoutIndex = -100 // День больше не является тренировочным
 
@@ -1589,8 +1656,10 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Рекомендация")
             .setMessage("Похоже, это слишком большая нагрузка для вас. Рекомендую снизить её в настройках, и тогда тренировки станут эффективнее.")
-            .setPositiveButton("OK") { _, _ ->
-                // Можно добавить логику перехода в настройки, если нужно
+            .setPositiveButton("Сменить") { _, _ ->
+                showPlanDialog2()
+            }.setNegativeButton("Отмена"){ _, _ ->
+
             }
             .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
             .show()
@@ -1686,33 +1755,14 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Рекомендация")
             .setMessage("Разница рабочих весов между подходами может быть слишком маленькой. Рекомендуем Вам докупить уменьшенные блины, чтобы более точно регулировать вес")
             .setPositiveButton("OK") { _, _ ->
-                // Можно добавить логику перехода в настройки, если нужно
+
             }
+
+
+
             .setCancelable(false) // Диалог нельзя закрыть, нажав вне области
             .show()
     }
 
 
 }
-/*private fun makeDayRest(workoutIndex: Int) {
-        val trainingDaysList = loadTrainingDaysFromSharedPreferences().toMutableList()
-
-        // Находим индекс дня по workoutIndex
-        val dayIndex = trainingDaysList.indexOfFirst { it.workoutIndex == workoutIndex }
-        if (dayIndex == -1) return
-
-        // Преобразуем день в день отдыха
-
-        trainingDaysList[dayIndex].isRestDay = true
-
-        // Сохраняем изменения
-        saveData()
-        saveTrainingDaysToSharedPreferences(trainingDaysList)
-
-        // Открываем экран дня отдыха
-        val intent = Intent(this@MainActivity, RestDayActivity::class.java)
-        startActivity(intent)
-
-        // Перегенерируем календарь после изменения состояния
-        generateCalendar(trainingStartDate)
-    } */
