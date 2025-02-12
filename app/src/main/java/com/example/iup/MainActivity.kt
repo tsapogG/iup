@@ -68,9 +68,9 @@ class MainActivity : AppCompatActivity() {
         calendarContainer = findViewById(R.id.calendarContainer)
 
 
+        loadSavedData()
 
-
-        if (isFirstRun()) {
+        if (benchPress == 0) {
             // Если это первый запуск, показываем диалог настройки плана тренировок
             showPlanDialog(isFirstSetup = true)
             generateWorkouts()
@@ -114,9 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun isFirstRun(): Boolean {
-        return sharedPreferences.getBoolean("isFirstRun", true)
-    }
+
 
     private fun openSettingsDialog() {
         val builder = AlertDialog.Builder(this)
