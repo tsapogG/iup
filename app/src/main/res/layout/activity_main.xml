@@ -115,6 +115,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent">
 
         <!-- Центрируем кнопку -->
@@ -132,7 +133,7 @@
             android:id="@+id/resetButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/ic_reset_icon"
+            android:background="@drawable/baseline_refresh_24"
         android:backgroundTint="#FF0000"
         android:contentDescription="Сброс настроек"
         android:elevation="4dp"
